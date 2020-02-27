@@ -1,0 +1,3166 @@
+\documentclass[11pt, aspectratio=169]{beamer}
+% \usetheme{NMSU} 
+\usetheme{Cornell} 
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{xcolor}
+\usepackage{soul}
+\usepackage{graphicx} % for figures
+%\usepackage{animate}
+\usepackage{tabularx}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows, decorations.pathreplacing}
+
+\usepackage{animate}
+\usepackage[export]{adjustbox}
+% \usepackage{hyperref}[hidelinks]
+\definecolor{hyperblue}{rgb}{0,0,0.7}
+
+% \hypersetup{
+%   colorlinks = true, 
+%   urlcolor = hyperblue, 
+%   linkcolor = hyperblue, 
+%     anchorcolor = hyperblue,
+%     citecolor = hyperblue,
+%     filecolor = hyperblue,
+%      }
+% \usepackage{titlepic}
+% \usefonttheme{serif}
+% \usefonttheme[onlymath]{serif}
+
+\author[Santantonio]{Nicholas Santantonio}
+\title[Research Seminar] {Data-driven breeding decisions for complex traits,\\ governed by complex genomes}
+\institute{Cornell University}
+\titlegraphic{\includegraphics[width=2cm]{"\string~/Dropbox/CUpres/CULogo-red120px"}}
+% \institute{New Mexico State University}
+% \titlegraphic{\includegraphics[width=2cm]{"\string~/Dropbox/NMSUinterview/NMSU_logos/NMSU_NoU-Crimson"}}
+
+
+\date{February 24$^\text{th}$, 2020} 
+\definecolor{G}{RGB}{76, 132, 59}
+\definecolor{sikPurple}{RGB}{160, 32, 239}
+
+
+\DeclareGraphicsExtensions{%
+    .pdf,.PDF,%
+    .png,.PNG,%
+    .jpg,.mps,.jpeg,.jbig2,.jb2,.JPG,.JPEG,.JBIG2,.JB2}
+
+\newcommand{\highlite}[1]{{\color{Carnellian} #1}}
+
+\newcommand{\backupbegin}{
+    \newcounter{finalframe}
+    \setcounter{finalframe}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+    \setcounter{framenumber}{\value{finalframe}}
+}
+
+\definecolor{darkgreen}{RGB}{0, 100, 0}  % 
+
+
+
+\newcommand{\gear}[6]{%
+	\foreach \i in {1,...,#1} {%
+  		[rotate=(\i-1)*360/#1 + #6]  (0:#2)  arc (0:#4:#2) {[rounded corners=1pt]
+             -- (#4+#5:#3)  arc (#4+#5:360/#1-#5:#3)} --  (360/#1:#2)
+}}    
+
+
+\newcommand{\partialgear}[7]{%
+\foreach \i in {1,...,#7} {%
+  [rotate=(\i-1)*360/#1+#6]  (0:#2)  arc (0:#4:#2) {[rounded corners=1pt]
+             -- (#4+#5:#3)  arc (#4+#5:360/#1-#5:#3)} --  (360/#1:#2)
+} -- (0:#2)
+}  
+
+\pgfmathdeclarefunction{gauss}{2}{%
+  \pgfmathparse{1/(#2*sqrt(2*pi))*exp(-((x-#1)^2)/(2*#2^2))}%
+}
+
+\definecolor{p3col}{RGB}{211, 82, 56}  % 
+\definecolor{p1col}{RGB}{70, 179, 209}  % 
+\definecolor{p2col}{RGB}{209, 163, 60}  % 
+
+\definecolor{G}{RGB}{76, 132, 59}
+\definecolor{A}{RGB}{221, 158, 50}
+\definecolor{B}{RGB}{61, 170, 179}
+\definecolor{D}{RGB}{216, 74, 82}
+
+\definecolor{optired}{RGB}{211, 82, 56}
+\definecolor{optiblue}{RGB}{70, 179, 209}
+\definecolor{optipurple}{RGB}{123, 98, 205}
+\definecolor{optigreen}{RGB}{117, 180, 65}
+\definecolor{optiyellow}{RGB}{209, 163, 60}
+\definecolor{optipink}{RGB}{211, 66, 121}
+% \definecolor{opti}{RGB}{188, 95, 107}
+% \definecolor{opti}{RGB}{127, 134, 61}
+% \definecolor{opti}{RGB}{196, 127, 188}
+\definecolor{optisteel}{RGB}{103, 127, 198}
+% \definecolor{opti}{RGB}{191, 79, 180}
+% \definecolor{opti}{RGB}{79, 169, 119}
+% \definecolor{opti}{RGB}{184, 118, 66}
+
+
+\tikzset{>=latex}
+% \tikzset{>=stealth'}
+
+\makeatletter
+\tikzset{
+    database/.style={
+        path picture={
+            \draw (0, 1.5*\database@segmentheight) circle [x radius=\database@radius,y radius=\database@aspectratio*\database@radius];
+            \draw (-\database@radius, 0.5*\database@segmentheight) arc [start angle=180,end angle=360,x radius=\database@radius, y radius=\database@aspectratio*\database@radius];
+            \draw (-\database@radius,-0.5*\database@segmentheight) arc [start angle=180,end angle=360,x radius=\database@radius, y radius=\database@aspectratio*\database@radius];
+            \draw (-\database@radius,1.5*\database@segmentheight) -- ++(0,-3*\database@segmentheight) arc [start angle=180,end angle=360,x radius=\database@radius, y radius=\database@aspectratio*\database@radius] -- ++(0,3*\database@segmentheight);
+        },
+        minimum width=2*\database@radius + \pgflinewidth,
+        minimum height=3*\database@segmentheight + 2*\database@aspectratio*\database@radius + \pgflinewidth,
+    },
+    database segment height/.store in=\database@segmentheight,
+    database radius/.store in=\database@radius,
+    database aspect ratio/.store in=\database@aspectratio,
+    database segment height=0.1cm,
+    database radius=0.25cm,
+    database aspect ratio=0.35,
+}
+\makeatother
+
+\definecolor{dgray}{RGB}{40, 40, 40}
+\definecolor{lgray}{RGB}{180, 180, 180}
+\definecolor{lgreen}{RGB}{137, 162, 76}
+\definecolor{dgreen}{RGB}{97, 115, 53}
+
+% \def\graycol{dgray}
+\def\graycol{lgray}
+
+
+\def\dronedrawcol{black}
+\def\dronefillcol{optired}
+\def\dronebladecol{dgray}
+\def\dronecameracol{optired}
+% \def\dronecol{dgray}
+
+\def\dbcol{optipurple}
+\def\dbfillcol{white}
+
+\def\plotLine{dgreen}
+\def\plotFill{lgreen}
+
+
+\def\dnabridge{optiyellow}
+\def\dnaA{optipurple}
+\def\dnaB{optiblue}
+
+\def\gearcol{optiyellow}
+\def\gearOTcol{lgray}
+
+  \setbeamertemplate{enumerate items}[circle]
+
+
+\begin{document}
+\frame{
+\titlepage
+}
+
+
+
+\section{New Mexico State University}
+\subsection{Alfalfa}
+
+\frame{\frametitle{About Me: New Mexico State University -- Alfalfa (\emph{Medicago sativa}) }
+    \begin{columns}
+        \begin{column}{0.5\linewidth}
+            \begin{columns}
+                \begin{column}{0.45\linewidth}
+                    BS Genetics 2010 \\
+                    MS Plant Sci. 2013
+                \end{column}
+                \begin{column}{0.55\linewidth}
+                    \ Ian Ray (Alfalfa)\vfill 
+                \end{column}
+            \end{columns}
+            \small{
+            \begin{itemize}
+                \item Productivity under drought
+                \begin{itemize}
+                    \item Shoot biomass QTL \\ (Ray et al. 2015, Crop Sci)
+                \end{itemize}
+                \item Water use efficiency
+                \begin{itemize}
+                    \item Carbon Isotope Discrimination QTL \\(Santantonio et al. 2018, Crop Sci)
+                    \item MAS at \emph{ERECTA} locus
+                \end{itemize}
+            \end{itemize}
+            }
+        \end{column}
+
+        \begin{column}{0.5\linewidth}
+            \centering
+            \begin{tikzpicture} 
+                \begin{scope}
+                    \clip [rounded corners=.25cm] (0,0) rectangle coordinate (centerpoint) (6,4cm); 
+                    \node [inner sep=0pt] at (centerpoint) {\includegraphics[clip, trim = 20cm 17cm 20cm 22cm, height=4cm]{"\string~/Dropbox/alfalfaPics/drought2 - 1"}}; 
+                \end{scope}
+            \end{tikzpicture}
+        \end{column}
+
+    \end{columns}
+    \begin{center}
+    \includegraphics[clip, trim = 0cm 0cm 0cm 8cm,width=0.8\linewidth]{"\string~/Dropbox/CUpres/alfalfadrought2"}
+    \end{center} 
+}
+
+
+
+
+\section{Cornell University}
+\subsection{Wheat}
+
+\frame{\frametitle{Cornell University}
+% BS Genetics NMSU 2010 \\
+
+\begin{columns}
+\begin{column}{0.6\linewidth}
+Mark Sorrells (Small Grains - Wheat) \\
+PhD Plant Breeding 2018 
+\small{
+\begin{itemize}
+  \item G$\times$E 
+    \begin{itemize}
+      \item \texttt{Bilinear} R software package 
+    \begin{itemize}
+       \item available at {\color{hyperblue}github.com/nsantantonio}%, GGE (github.com/nsantantonio/)
+    \end{itemize}
+      \item Fructans (Veenstra et al., 2018)
+      \item Organic wheat (Kucek et al., 2018)
+      % \item Phenotypic stability 
+    \end{itemize}
+  \item Genomic Prediction in Allopolyploids
+      \begin{itemize}
+      \item Subgenome interactions (Santantonio et al., 2019a)
+      \item Homeologous epistasis (Santantonio et al., 2019b)
+      \item Regional epistasis mapping \\ (Santantonio et al., 2019c)
+    \end{itemize}
+
+\end{itemize}
+}
+% \end{itemize}
+\end{column}
+
+
+\begin{column}{0.4\linewidth}
+\begin{tikzpicture}
+    \setlength{\abovedisplayskip}{0pt}
+    \setlength{\belowdisplayskip}{0pt}
+
+  \node (combine) at (0, 4) { \includegraphics[width=\linewidth]{"\string~/Dropbox/CUpres/truck"}};
+  \visible<2>{\node (math) at (0, 0) {
+        \begin{minipage}{\textwidth}
+        \tiny
+            \begin{align*}
+                &\mathbf{y} = \mathbf{1} \mu + \mathbf{X}\boldsymbol\beta + \mathbf{ZQ}\boldsymbol\gamma +  \sum_l \mathbf{Z}\mathbf{g}_l +  \boldsymbol\varepsilon \\
+                &\text{GEBV} = (\mathbf{I}_n  - \bar{\mathbf{J}}_n) (\mathbf{Q}\hat{\boldsymbol\gamma}) + \sum_l \hat{\mathbf{g}}_l 
+            \end{align*}
+        \end{minipage}
+    };
+ 
+  \draw [->, very thick] (combine) -- (math);
+}
+\end{tikzpicture}
+\end{column}
+\end{columns}
+}
+
+\subsection{Quantitative Genetics}
+
+
+\frame{\frametitle{Cornell University}
+% BS Genetics NMSU 2010 \\
+
+\begin{columns}
+\begin{column}{0.5\linewidth}
+Kelly Robbins (Quantitative Genetics)
+\begin{itemize}
+\item Post Doc, current 
+\begin{itemize}
+    \setlength\itemsep{1em}
+  \item Crop flexible, equal opportunity 
+  \begin{itemize}
+      \item Chickpea, maize, alfalfa, simulated
+    \end{itemize}
+  \item Breeding scheme optimization
+      \begin{itemize}
+      \item Sparse testing
+      \item Optimal contributions 
+    \end{itemize}
+    \item High-throughput Phenotyping
+    \begin{itemize}
+      \item Longitudinal models
+      \item Genotype specific growth curves 
+    \end{itemize}
+\end{itemize}
+\end{itemize}
+\end{column}
+
+\begin{column}{0.5\linewidth}
+    \includegraphics[width=0.9\linewidth]{"\string~/Dropbox/alfalfaGeneva/truckFromAboveLowRes"}
+
+  % \input{"\string ~/Dropbox/optiBreedSim/tikzFigures20x75/bestRTvsOCBpR8"}
+\end{column}
+\end{columns}
+
+
+}
+
+
+
+\section{Plant Breeding}
+\subsection{Outline}
+
+
+\frame{
+\begin{columns}
+\begin{column}{0.3\linewidth}
+Plant breeding 
+\begin{itemize}
+\item Multi-disciplinary 
+\item Team oriented
+\end{itemize}
+\vspace{3mm}
+\visible<2->{Two and a half stories}
+\begin{itemize}
+  \visible<3->{\item Subgenome interactions in wheat}
+  \visible<4->{\item Transitioning to a $21^\text{st}$ Century breeding program}
+  \visible<5>{\item Integrating the latest technologies}
+\end{itemize}
+\end{column}
+\begin{column}{0.7\linewidth}
+\centering
+% \frametitle{Technology integration for advancing plant breeding}
+  \begin{tikzpicture}
+% helix
+    \visible<1-2>{
+      \begin{scope}[domain=1.9:13.1, samples=101, xshift = 0cm, yshift = -1cm, scale=0.18, rotate = 60]
+          \foreach \x in {2, ...,13}{
+            \draw[thick, \graycol, line cap=round] (\x,{-sin(\x*36)}) -- (\x,{sin(\x*36)});
+          }
+          \draw[\graycol, very thick, line cap=round] plot (\x,{sin(\x*36)});
+          \draw[\graycol, very thick, line cap=round] plot (\x,{-sin(\x*36)});
+          \node at (5,8) {\begin{tabular}{c} Genome-wide\\markers \end{tabular}};
+      \end{scope}
+    } 
+    \visible<3-5>{
+      \begin{scope}[domain=1.9:13.1, samples=101, xshift = 0cm, yshift = -1cm, scale=0.18, rotate = 60]
+          \foreach \x in {2, ...,13}{
+            \draw[thick, \dnabridge, line cap=round] (\x,{-sin(\x*36)}) -- (\x,{sin(\x*36)});
+          }
+          \draw[\dnaA, very thick, line cap=round] plot (\x,{sin(\x*36)});
+          \draw[\dnaB, very thick, line cap=round] plot (\x,{-sin(\x*36)});
+          \node at (5,8) {\begin{tabular}{c} Genome-wide\\markers \end{tabular}};
+      \end{scope}
+    } 
+% VDP
+    \visible<1-3>{
+      \begin{scope}[xshift = 5.5cm, yshift = 1cm, scale=0.15]
+          \foreach \x in {-9, ...,9}{
+        \draw[draw = \graycol, fill = \graycol, thick, rounded corners = 0.5] (\x*0.5 - 0.1, 0) rectangle (\x*0.5 + 0.1, -2);
+          }
+          \foreach \x in {-4, ...,4}{
+        \draw[draw = \graycol, fill = \graycol, thick, rounded corners = 1] (\x*0.75 - 0.25, -2.5) rectangle (\x*0.75 +0.25, -4.5);
+          }
+          \foreach \x in {-2, ...,2}{
+        \draw[draw = \graycol, fill = \graycol, thick, rounded corners = 1] (\x-0.35, -5) rectangle (\x+0.35, -7);
+          }
+          \foreach \x in {-1, ...,1}{
+        \draw[draw = \graycol, fill = \graycol, thick, rounded corners = 1] (\x*1.25-0.45, -7.5) rectangle (\x*1.25+0.45, -10.5);
+          }
+        \draw[draw = \graycol, fill = \graycol, thick, rounded corners = 1] (-0.45, -11) rectangle (0.45, -14);
+        % \node at (10,-7) {\begin{tabular}{c} Variety\\development\\pipeline \end{tabular}};
+        % \node at (10,-7) {\begin{tabular}{c} Variety\\development \end{tabular}};
+        \node at (10,-7) {\begin{tabular}{c} Ground\\phenotyping \end{tabular}};
+
+      \end{scope}
+    }
+   \visible<4-5>{
+      \begin{scope}[xshift = 5.5cm, yshift = 1cm, scale=0.15]
+          \foreach \x in {-9, ...,9}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 0.5] (\x*0.5 - 0.1, 0) rectangle (\x*0.5 + 0.1, -2);
+          }
+          \foreach \x in {-4, ...,4}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*0.75 - 0.25, -2.5) rectangle (\x*0.75 +0.25, -4.5);
+          }
+          \foreach \x in {-2, ...,2}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x-0.35, -5) rectangle (\x+0.35, -7);
+          }
+          \foreach \x in {-1, ...,1}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*1.25-0.45, -7.5) rectangle (\x*1.25+0.45, -10.5);
+          }
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (-0.45, -11) rectangle (0.45, -14);
+        % \node at (10,-7) {\begin{tabular}{c} Variety\\development\\pipeline \end{tabular}};
+        % \node at (10,-7) {\begin{tabular}{c} Variety\\development \end{tabular}};
+        \node at (10,-7) {\begin{tabular}{c} Ground\\phenotyping \end{tabular}};
+
+      \end{scope}
+    }
+    \visible<1-4>{
+      % drone
+      \begin{scope}[xshift = 6cm, yshift = -2.5cm, scale=0.14]
+        \draw[draw = \graycol, fill = \graycol] (0, 0) ellipse (6 and 0.5);
+        \draw[draw = \graycol, fill = \graycol] (6, 1) ellipse (0.2 and 1);
+        \draw[draw = \graycol, fill = \graycol] (-6, 1) ellipse (0.2 and 1);
+        \draw[draw = \graycol, fill = \graycol] (6, 2) circle (0.2);
+        \draw[draw = \graycol, fill = \graycol] (-6, 2) circle (0.2);
+        \draw[draw = \graycol, fill = \graycol] (4.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \graycol, fill = \graycol] (-4.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \graycol, fill = \graycol] (7.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \graycol, fill = \graycol] (-7.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \graycol, fill = \graycol, rounded corners = 1] (-2, -0.7) rectangle (2, -3);
+        \draw[draw = white, fill = black, thick] (0.7, -2) circle (0.7);
+        \fill[draw = white, fill = white] (0.5, -1.8) circle (0.3);
+        \node(center) at (0,-7) {\begin{tabular}{c} High throughput\\phenotyping \end{tabular}};
+      \end{scope}
+    }
+  \visible<5>{
+      % drone
+      \begin{scope}[xshift = 6cm, yshift = -2.5cm, scale=0.14]
+        \draw[draw = \dronedrawcol, fill = \dronefillcol] (0, 0) ellipse (6 and 0.5);
+        \draw[draw = \dronedrawcol, fill = \dronefillcol] (6, 1) ellipse (0.2 and 1);
+        \draw[draw = \dronedrawcol, fill = \dronefillcol] (-6, 1) ellipse (0.2 and 1);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (6, 2) circle (0.2);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (-6, 2) circle (0.2);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (4.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (-4.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (7.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (-7.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \dronedrawcol, fill = \dronecameracol, rounded corners = 1] (-2, -0.7) rectangle (2, -3);
+        \draw[draw = white, fill = black, thick] (0.7, -2) circle (0.7);
+        \fill[draw = white, fill = white] (0.5, -1.8) circle (0.3);
+        \node(center) at (0,-7) {\begin{tabular}{c} High throughput\\phenotyping \end{tabular}};
+      \end{scope}
+    }
+      % database
+     \visible<1-3>{
+      \begin{scope}[xshift = 3cm, yshift = -3.7cm, scale=0.12]
+          \node[database,label=below:Data management,database radius=0.75cm,database segment height=0.325cm, \graycol, very thick] at (0,0) {};
+      \end{scope}
+      }
+      \visible<4,5>{
+      \begin{scope}[xshift = 3cm, yshift = -3.7cm, scale=0.12]
+          \node[database,label=below:Data management,database radius=0.75cm,database segment height=0.325cm, \dbcol, very thick] at (0,0) {};
+      \end{scope}
+      }
+% stats / machine learning
+    % \begin{scope}[xshift = -3cm, yshift = -3cm, scale=0.2]
+    %     \node at (0,0) {$y = \mathbf{1}\mu + \mathbf{X}\boldsymbol{\beta} + \mathbf{Zu} + \mathbf{e}$};
+    %     \node at (0,2) {Statistics};
+    % \end{scope}
+  \visible<1-2>{
+    \begin{scope}[xshift=0cm, yshift=-2.5cm, rotate=0, scale=0.25]
+      \fill[\graycol] circle (2.5cm);
+      \draw[\gearOTcol, thick, fill = \graycol] \gear{8}{2.5}{3}{20}{4}{16};
+      \draw[thick, \graycol, fill=white] (0cm,0cm) circle(2cm);
+      \node[align=center, circle,inner sep=0pt, minimum size=3cm] (gp) at (0, 0) {\tiny{$\ \ \begin{aligned}\sum^P_{i=1} \alpha_i \end{aligned}$}};
+      \node at (0, -5) {\begin{tabular}{c} Statistics \&\\machine learning \end{tabular}};
+    \end{scope}
+  }
+  \visible<3-5>{
+    \begin{scope}[xshift=0cm, yshift=-2.5cm, rotate=0, scale=0.25]
+      \fill[\gearcol] circle (2.5cm);
+      \draw[thick, fill = \gearcol] \gear{8}{2.5}{3}{20}{4}{16};
+      \draw[thick, dgray, fill=white] (0cm,0cm) circle(2cm);
+      \node[align=center, circle,inner sep=0pt, minimum size=3cm] (gp) at (0, 0) {\tiny{$\ \ \begin{aligned}\sum^P_{i=1} \alpha_i \end{aligned}$}};
+      \node at (0, -5) {\begin{tabular}{c} Statistics \&\\machine learning \end{tabular}};
+    \end{scope}
+  }
+  
+  \visible<1-2,4>{
+  \begin{scope}[xshift = 3cm, yshift = 1.6cm, scale=1]
+    \node (wheatbig) at (0,0) {\includegraphics[height = 1.6cm]{"\string~/Dropbox/wheatCartoons/aestivumDark180"}};
+    \node (wheatbig) at (0,1) {Organism biology};
+  \end{scope}
+  }
+  \visible<3,5>{
+  \begin{scope}[xshift = 3cm, yshift = 1.6cm, scale=1]
+    \node (wheatbig) at (0,0) {\includegraphics[height = 1.6cm]{"\string~/Dropbox/wheatCartoons/aestivum"}};
+    \node (wheatbig) at (0,1) {Organism biology};
+  \end{scope}
+  }
+
+  \begin{scope}[xshift=3cm, yshift=-1cm, scale=1]
+    % \draw [->, dgray, very thick] ([shift=(445:0.5cm)] 0,-1) arc (445:335:0.5cm);
+    % \draw [->, dgray, very thick] ([shift=(205:0.5cm)] 0,-1) arc (205:95:0.5cm);
+    % \draw [->, dgray, very thick] ([shift=(325:0.5cm)] 0,-1) arc (325:215:0.5cm);
+    % \node (plbrg) at (0,-1.1) {Plant Breeding};
+    \node[draw,thick, LightGray, fill = DarkGray, minimum width=2cm,minimum height=1cm, rounded corners = 0.2cm] (plbrg) at (0,0) {Plant Breeding};
+    % \node (plbrg) at (0,0) {Plant Breeding};
+  \end{scope}
+
+  % \draw[->,\graycol, very thick] () -- (plbrg)
+
+\end{tikzpicture}%
+\end{column}
+\end{columns}
+
+}
+
+
+\frame{
+\begin{columns}
+\begin{column}{0.3\linewidth}
+{\color{lgray}Plant breeding}
+\begin{itemize}
+\item {\color{lgray}Multi-disciplinary}
+\item {\color{lgray}Team oriented}
+\end{itemize}
+\vspace{3mm}
+{\color{lgray}Two and a half stories}
+\begin{itemize}
+  \item Subgenome interactions in wheat
+  \item {\color{lgray}Transitioning to a $21^\text{st}$ Century breeding program}
+  \item {\color{lgray}Integrating the latest technologies}
+\end{itemize}
+\end{column}
+\begin{column}{0.7\linewidth}
+\centering
+% \frametitle{Technology integration for advancing plant breeding}
+  \begin{tikzpicture}
+% helix
+   
+      \begin{scope}[domain=1.9:13.1, samples=101, xshift = 0cm, yshift = -1cm, scale=0.18, rotate = 60]
+          \foreach \x in {2, ...,13}{
+            \draw[thick, \dnabridge, line cap=round] (\x,{-sin(\x*36)}) -- (\x,{sin(\x*36)});
+          }
+          \draw[\dnaA, very thick, line cap=round] plot (\x,{sin(\x*36)});
+          \draw[\dnaB, very thick, line cap=round] plot (\x,{-sin(\x*36)});
+          \node at (5,8) {\begin{tabular}{c} Genome-wide\\markers \end{tabular}};
+      \end{scope}
+    
+% VDP
+          \begin{scope}[xshift = 5.5cm, yshift = 1cm, scale=0.15]
+          \foreach \x in {-9, ...,9}{
+        \draw[draw = \graycol, fill = \graycol, thick, rounded corners = 0.5] (\x*0.5 - 0.1, 0) rectangle (\x*0.5 + 0.1, -2);
+          }
+          \foreach \x in {-4, ...,4}{
+        \draw[draw = \graycol, fill = \graycol, thick, rounded corners = 1] (\x*0.75 - 0.25, -2.5) rectangle (\x*0.75 +0.25, -4.5);
+          }
+          \foreach \x in {-2, ...,2}{
+        \draw[draw = \graycol, fill = \graycol, thick, rounded corners = 1] (\x-0.35, -5) rectangle (\x+0.35, -7);
+          }
+          \foreach \x in {-1, ...,1}{
+        \draw[draw = \graycol, fill = \graycol, thick, rounded corners = 1] (\x*1.25-0.45, -7.5) rectangle (\x*1.25+0.45, -10.5);
+          }
+        \draw[draw = \graycol, fill = \graycol, thick, rounded corners = 1] (-0.45, -11) rectangle (0.45, -14);
+        % \node at (10,-7) {\begin{tabular}{c} Variety\\development\\pipeline \end{tabular}};
+        % \node at (10,-7) {\begin{tabular}{c} Variety\\development \end{tabular}};
+        \node at (10,-7) {\begin{tabular}{c} Ground\\phenotyping \end{tabular}};
+
+      \end{scope}
+       \begin{scope}[xshift = 6cm, yshift = -2.5cm, scale=0.14]
+        \draw[draw = \graycol, fill = \graycol] (0, 0) ellipse (6 and 0.5);
+        \draw[draw = \graycol, fill = \graycol] (6, 1) ellipse (0.2 and 1);
+        \draw[draw = \graycol, fill = \graycol] (-6, 1) ellipse (0.2 and 1);
+        \draw[draw = \graycol, fill = \graycol] (6, 2) circle (0.2);
+        \draw[draw = \graycol, fill = \graycol] (-6, 2) circle (0.2);
+        \draw[draw = \graycol, fill = \graycol] (4.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \graycol, fill = \graycol] (-4.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \graycol, fill = \graycol] (7.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \graycol, fill = \graycol] (-7.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \graycol, fill = \graycol, rounded corners = 1] (-2, -0.7) rectangle (2, -3);
+        \draw[draw = white, fill = black, thick] (0.7, -2) circle (0.7);
+        \fill[draw = white, fill = white] (0.5, -1.8) circle (0.3);
+        \node(center) at (0,-7) {\begin{tabular}{c} High throughput\\phenotyping \end{tabular}};
+      \end{scope}
+        % database
+      \begin{scope}[xshift = 3cm, yshift = -3.7cm, scale=0.12]
+          \node[database,label=below:Data management,database radius=0.75cm,database segment height=0.325cm, \graycol, very thick] at (0,0) {};
+      \end{scope}
+
+% stats / machine learning
+    % \begin{scope}[xshift = -3cm, yshift = -3cm, scale=0.2]
+    %     \node at (0,0) {$y = \mathbf{1}\mu + \mathbf{X}\boldsymbol{\beta} + \mathbf{Zu} + \mathbf{e}$};
+    %     \node at (0,2) {Statistics};
+    % \end{scope}
+
+    \begin{scope}[xshift=0cm, yshift=-2.5cm, rotate=0, scale=0.25]
+      \fill[\gearcol] circle (2.5cm);
+      \draw[thick, fill = \gearcol] \gear{8}{2.5}{3}{20}{4}{16};
+      \draw[thick, dgray, fill=white] (0cm,0cm) circle(2cm);
+      \node[align=center, circle,inner sep=0pt, minimum size=3cm] (gp) at (0, 0) {\tiny{$\ \ \begin{aligned}\sum^P_{i=1} \alpha_i \end{aligned}$}};
+      \node at (0, -5) {\begin{tabular}{c} Statistics \&\\machine learning \end{tabular}};
+    \end{scope}
+
+  
+  \begin{scope}[xshift = 3cm, yshift = 1.6cm, scale=1]
+    \node (wheatbig) at (0,0) {\includegraphics[height = 1.6cm]{"\string~/Dropbox/wheatCartoons/aestivum"}};
+    \node (wheatbig) at (0,1) {Organism biology};
+  \end{scope}
+
+  \begin{scope}[xshift=3cm, yshift=-1cm, scale=1]
+    % \draw [->, dgray, very thick] ([shift=(445:0.5cm)] 0,-1) arc (445:335:0.5cm);
+    % \draw [->, dgray, very thick] ([shift=(205:0.5cm)] 0,-1) arc (205:95:0.5cm);
+    % \draw [->, dgray, very thick] ([shift=(325:0.5cm)] 0,-1) arc (325:215:0.5cm);
+    % \node (plbrg) at (0,-1.1) {Plant Breeding};
+    \node[draw,thick, LightGray, fill = DarkGray, minimum width=2cm,minimum height=1cm, rounded corners = 0.2cm] (plbrg) at (0,0) {Plant Breeding};
+    % \node (plbrg) at (0,0) {Plant Breeding};
+  \end{scope}
+
+  % \draw[->,\graycol, very thick] () -- (plbrg)
+
+\end{tikzpicture}%
+\end{column}
+\end{columns}
+
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% BEGIN WHEAT SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Allopolyploids}
+
+
+\usebackgroundtemplate{}
+
+
+
+% \tikz\node[opacity=0.3] {\includegraphics[height=\paperheight,width=\paperwidth]{jr_HighRes}};}
+
+% \subsection{Exploiting crop biology}
+
+\frame{\frametitle{Mac Key 1970}
+\begin{center}
+  \includegraphics[clip, trim = 0cm 20cm 0cm 0cm, width=0.7\linewidth]{"\string~/Dropbox/CUpres/abstract"}
+\end{center}
+\normalsize
+\begin{itemize}
+\item Evolutionary ``balance between new-creating and preserving forces.''
+\item Maintain ``homozygosity and heterozygosity ... at different homoeologous loci.''
+\item Allopolyploids preserve through selfing (homo), while maintaining allelic diversity (homeo)
+\end{itemize}
+}
+
+
+\subsection{Allohexaploid wheat}
+
+\frame{\frametitle{Evolution of allohexaploid wheat}
+\begin{columns}
+\begin{column}{0.37\linewidth}
+  \includegraphics<1>[clip, trim = 0cm 0cm 3.5cm 0cm, width=0.95\linewidth, page = 5]{"\string~/Dropbox/CUpres/wheatEvo5"}%
+  \includegraphics<2>[clip, trim = 0cm 0cm 3.5cm 0cm, width=0.95\linewidth, page = 6]{"\string~/Dropbox/CUpres/wheatEvo5"}%
+  \includegraphics<3>[clip, trim = 0cm 0cm 3.5cm 0cm, width=0.95\linewidth, page = 7]{"\string~/Dropbox/CUpres/wheatEvo5"}%
+  \includegraphics<4>[clip, trim = 0cm 0cm 3.5cm 0cm, width=0.95\linewidth, page = 8]{"\string~/Dropbox/CUpres/wheatEvo5"}%
+\end{column}
+
+\begin{column}{0.5\linewidth}
+  \emph{Triticum}
+  \begin{itemize}
+    \item Fertile Crecent
+    \item Neolithic revolution
+    \item AA $\times$ BB $\sim$ 0.5 Mya
+
+  \end{itemize}
+\vspace{4mm}
+ \visible<3-4>{ \emph{Aegelops}
+  \begin{itemize}
+    \item early speciation from Triticum (A $\times$ B)
+    \item AABB $\times$ DD $\sim$ 10,000 ya
+  \end{itemize}
+}
+\end{column}
+% \vfill
+\end{columns}
+}
+
+
+\frame{\frametitle{Allohexaploid wheat}
+\begin{columns}
+\begin{column}{0.15\linewidth}
+  \includegraphics[page=12, clip, trim = 0in 0in 8.5in 0in, height=0.85\textheight]{"\string~/Dropbox/CUpres/armCartoon2"}
+\end{column}
+
+\begin{column}{0.8\linewidth}
+Allopolyploid
+\pause
+
+  % \begin{itemize}
+  %   \item \highlite{Very difficult to assemble a genome}
+  %   \begin{itemize}
+  %     \item Thank you IWGSC! (and for prepublication access!)
+  %   \end{itemize}
+  % \end{itemize}
+  %   \pause
+    % \vspace{2mm}
+  \begin{itemize}
+    \item Disomic inheritance 
+    \begin{itemize}
+      \item no crossover across homeologous chromosomes 
+    \end{itemize}
+    \pause
+    \vspace{2mm}
+  \item Autogamous 
+    \begin{itemize}
+      \item self-pollinated (outcrossing $< 1\%$)
+    \end{itemize}
+   \pause
+   \vspace{2mm}
+    \item Allelic diversity preserved across subgenomes
+  \begin{itemize}
+      \item Most genes have three divergent copies!
+    \end{itemize}
+  \end{itemize}
+  \pause
+  \vspace{3mm}
+  
+  Is wheat an immortalized hybrid?
+
+  \end{column}
+
+
+\end{columns}
+
+}
+
+\subsection{Motivation}
+
+% \tikzset{>=stealth'}
+
+\frame{\frametitle{Hybrid generation}
+  \begin{center}
+\begin{tikzpicture}[node distance=2cm and 1cm, auto, draw = DarkGray]
+  \node (invisT) at (1, 4) {};
+  \node (invisB) at (1, 2) {};
+  \node (E)[align=left] at (0, 3) {Reciprocal \\ recurrent \\ selection};
+  \node (OP) at (5, 4) {{\color{B}X}, {\color{A}x}, \ {\color{A}Y}, \ {\color{B}y}, \ {\color{B}Z}, \ {\color{A}z}};
+  \node (pop) at (9, 4) {Open Pollinated};
+  \node (A) at (3, 1) {{\color{A}xxYYzz}};
+  \node (groupA) at (0, 1) {Group {\color{A}A}};
+  \node (B) at (7, 1) {{\color{B}XXyyZZ}};
+  \node (groupB) at (10, 1) {Group {\color{B}B}};  
+  \draw [thick, ->] (OP) -- (A);
+  \draw [thick, ->] (OP) -- (B); 
+  \draw [thick, ->] (invisT) -- (invisB); 
+  \pause
+  \node (AB) at (5, 0) {{\color{A}x}{\color{B}X}{\color{A}Y}{\color{B}y}{\color{A}z}{\color{B}Z}};  
+  \node (hybrid) at (8, 0) {Hybrid};  
+  \draw [thick, ->] (A) -- (AB);
+  \draw [thick, ->] (B) -- (AB); 
+  \pause
+  \node (Int) at (5, -1) {allelic interactions! \highlite{(dominance)}};
+\end{tikzpicture}
+\end{center}
+}
+
+
+\frame{\frametitle{Allopolyploid formation}
+  \begin{center}
+\begin{tikzpicture}[node distance=2cm and 1cm, auto, draw = DarkGray]
+  \node (invisT) at (1, 4) {};
+  \node (invisB) at (1, 2) {};
+  \node (E)[align=left] at (0, 3) {Mutation \& \\ natural \\ selection};
+  \node (OP) at (5, 4) {$x \ y \ z$};
+  \node (pop) at (9, 4) {Common Ancestor};
+  \node (A) at (3, 1) {{\color{A}xxYYzz}};
+  \node (groupA) at (0, 1) {Species {\color{A}A}};
+  \node (B) at (7, 1) {{\color{B}XXyyZZ}};
+  \node (groupB) at (10, 1) {Species {\color{B}B}};  
+  \draw [thick, ->] (OP) -- (A);
+  \draw [thick, ->] (OP) -- (B); 
+  \draw [thick, ->] (invisT) -- (invisB); 
+  \pause
+  \node (AB) at (5, 0) {{\color{A}xx}{\color{B}XX}{\color{A}YY}{\color{B}yy}{\color{A}zz}{\color{B}ZZ}};  
+  \node (hybrid) at (8, 0) {Homeo-Hybrid};  
+  \draw [thick, ->] (A) -- (AB);
+  \draw [thick, ->] (B) -- (AB); 
+    \pause
+  \node (Int)  at (5, -1) {homeoallelic interactions? \highlite{(homeologous epistasis)}};
+\end{tikzpicture}
+
+\visible<4>{\highlite{With markers and a genome, we can now ask this question!}}
+\end{center}
+}
+
+\section{Cornell small grains}
+\subsection{Breeding population}
+
+
+\frame{\frametitle{Cornell Winter Wheat Master Population}
+\begin{columns}
+\begin{column}{0.15\linewidth}
+  \includegraphics[page=12, clip, trim = 0in 0in 8.5in 0in, height=0.85\textheight]{"\string~/Dropbox/CUpres/armCartoon2"}
+\end{column}
+
+\begin{column}{0.45\linewidth}
+Cornell winter wheat breeding population
+\pause
+\vspace{2mm}
+    \begin{itemize}
+      \item 8,692 phenotypic records
+      \begin{itemize}
+        \item 1,447 lines 
+        \item 26 NY trials 
+        \item 10 years (2007 - 2016)
+        \item 2-3 locations / year
+        \item 11,604 GBS markers
+      \end{itemize}
+      \pause
+      \vspace{2mm}
+      \item 4 traits
+      \begin{itemize}
+        \item Grain Yield (GY)
+        \item Test Weight (TW)
+        \item Heading Date (HD)
+        \item Plant Height (PH)
+      \end{itemize}
+    \end{itemize}
+\end{column}
+
+
+\pause
+\begin{column}{0.4\linewidth}
+\vspace{2mm}
+    \begin{itemize}
+      \item Align markers to RefSeq v1.0
+    \begin{itemize}
+      \item \highlite{separate markers by subgenome}
+      \item \highlite{calculate genetic covariance for each subgenome:}\\ $\mathbf{K}_{\color{A}A}$, $\mathbf{K}_{\color{B}B}$ and $\mathbf{K}_{\color{D}D}$
+      \item \highlite{estimate subgenome breeding values}
+    \end{itemize}
+    \end{itemize}
+\end{column}
+% \vfill
+
+\end{columns}
+
+}
+
+
+\section{Subgenome Effects}
+
+\subsection{Subgenome additive effects}
+
+
+\frame{\frametitle{Can predict subgenome breeding values}
+%trim={<left> <lower> <right> <upper>}
+\begin{columns}
+\begin{column}{.4\textwidth}%
+\includegraphics<1-4>[page=1, clip, trim = 0cm 9cm 7cm 0.3cm, width=0.9\linewidth]{"\string~/Dropbox/CUpres/armCartoon2"}%
+
+\includegraphics<1-2>[page=11, clip, trim = 0cm 9cm 7cm 0.3cm, width=0.9\linewidth]{"\string~/Dropbox/CUpres/armCartoon2"}%
+
+\includegraphics<3-4>[page=2, clip, trim = 0cm 9cm 7cm 0.3cm, width=0.9\linewidth]{"\string~/Dropbox/CUpres/armCartoon2"}%
+\end{column}%
+\begin{column}{.2\textwidth}%
+\end{column}%
+\begin{column}{.4\textwidth}%
+
+\centering
+\begin{tikzpicture}
+  \node (graph) at (0, 0) {
+  \includegraphics<2-3>[page = 1, width=0.9\linewidth]{"\string~/Dropbox/MasterGenotypeswithOHMI/predAccBarPlotBig"}%
+  \includegraphics<4>[page = 2, width=0.9\linewidth]{"\string~/Dropbox/MasterGenotypeswithOHMI/predAccBarPlotBig"}%
+  };
+  \node (cite) at (0.5, 2.8) {{\visible<2-4>{\tiny{Santantonio, Jannink and Sorrells (2019a; G3)}}}};
+
+\end{tikzpicture}
+\visible<2->{\highlite{Use genomic prediction to evaluate genetic signal}}
+
+\end{column}
+\end{columns}
+
+}
+
+\begin{frame}
+\begin{columns}
+\begin{column}{0.7\linewidth}
+  \raggedright{\small \textbf{GY} Grain Yield}\\
+\centering
+  \includegraphics[width = 0.95\linewidth]{"\string~/Dropbox/CNLM/addPlots/YieldGABDeffect_Q0sidebysideCNLM"} 
+
+\raggedright{\small \textbf{TW} Test Weight}\\
+\centering
+\includegraphics[width = 0.95\linewidth]{"\string~/Dropbox/CNLM/addPlots/TWGABDeffect_Q0sidebysideCNLM"}
+\end{column}
+\begin{column}{0.3\linewidth}
+\centering
+\begin{tikzpicture}[scale = 0.25]
+  \coordinate [label={[label distance=0.2cm]0:best {\color{A}A}}] (A) at (0.5, 4.5) {};
+  \coordinate [label={[label distance=0.2cm]0:best {\color{B}B}}] (A) at (0.5, 2.5) {};
+  \coordinate [label={[label distance=0.2cm]0:best {\color{D}D}}] (A) at (0.5, 0.5) {};
+  \draw[draw = blue, fill = blue, yshift = 1] (0, 4) rectangle (1, 5);
+  \draw[draw = blue, fill = blue, yshift = 2] (0, 2) -- (0.5, 3) -- (1, 2) -- (0, 2);
+  \draw[draw = blue, fill = blue, yshift = 3] (0, 0.5) -- (0.5, 1) -- (1, 0.5) -- (0.5, 0);
+\end{tikzpicture}
+\vspace{5mm}
+\begin{itemize}
+  \item Best individuals dont have the best subgenomes
+  \item Can select on specific subgenomes
+  \item Can select parents with complementary subgenomes
+\end{itemize}
+\vspace{16mm}
+\tiny{Santantonio, Jannink and Sorrells (2019a; G3)}
+
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\subsection{Subgenome interactions}
+
+
+\frame{\frametitle{Subgenome interactions aid genomic prediction}
+\begin{columns}
+\begin{column}{.4\textwidth}%
+\includegraphics<1>[page=1, clip, trim = 0cm 9cm 7cm 0.3cm, width=0.9\linewidth]{"\string~/Dropbox/CUpres/armCartoon2"}%
+
+\includegraphics<1>[page=2, clip, trim = 0cm 9cm 7cm 0.3cm, width=0.9\linewidth]{"\string~/Dropbox/CUpres/armCartoon2"}%
+
+\includegraphics<2-5>[page=3, clip, trim = 0cm 9cm 7cm 0.3cm, width=0.9\linewidth]{"\string~/Dropbox/CUpres/armCartoon2"}%
+
+\includegraphics<2-3>[page=2, clip, trim = 0cm 9cm 7cm 0.3cm, width=0.9\linewidth]{"\string~/Dropbox/CUpres/armCartoon2"}%
+
+\includegraphics<4-5>[page=4,  clip, trim = 0cm 9cm 7cm 0.3cm, width=0.9\linewidth]{"\string~/Dropbox/CUpres/armCartoon2"}% 
+\end{column}%
+\begin{column}{.2\textwidth}%
+  \visible<2-5>{Hadamard product for epistatic covariance
+  $\mathbf{K}_{\color{G}G} \odot \mathbf{K}_{\color{G}G}$
+}
+  \vspace{15mm}
+ \visible<4-5>{
+  $\mathbf{K}_{\color{A}A} \odot \mathbf{K}_{\color{B}B}$\\
+  $\mathbf{K}_{\color{A}A} \odot \mathbf{K}_{\color{D}D}$\\
+  $\mathbf{K}_{\color{B}B} \odot \mathbf{K}_{\color{D}D}$
+}
+\end{column}
+\begin{column}{.4\textwidth}%
+\centering
+\begin{tikzpicture}
+  \node (graph) at (0, 0) {
+  \includegraphics<1-2>[page = 2, width=0.9\linewidth]{"\string~/Dropbox/MasterGenotypeswithOHMI/predAccBarPlotBig"}%
+  \includegraphics<3-4>[page = 4, width=0.9\linewidth]{"\string~/Dropbox/MasterGenotypeswithOHMI/predAccBarPlotBig"}%
+  \includegraphics<5>[page = 5, width=0.9\linewidth]{"\string~/Dropbox/MasterGenotypeswithOHMI/predAccBarPlotBig"}%
+  };
+  \node (cite) at (0.5, 2.8) {{\visible<1-5>{\tiny{Santantonio, Jannink and Sorrells (2019a; G3)}}}};
+
+\end{tikzpicture}
+
+\visible<5>{\highlite{Suggests all epistasis is homeologous?}}
+
+\end{column}
+\end{columns}
+
+}
+
+
+\section{Homeologous Epistasis}
+
+
+% \usebackgroundtemplate{%
+% \tikz\node[opacity=0.3] {\includegraphics[height=\paperheight,width=\paperwidth]{{{"\string~/Dropbox/PAG2020/jr_HighRes"}}}};}
+
+% \usebackgroundtemplate{}
+
+\subsection{Two Locus Epistasis}
+\frame{\frametitle{Two-Locus Epistasis}
+
+\begin{columns}
+\begin{column}{0.65\linewidth}
+
+Consider the two locus model (from Hill et al. 2008):
+
+\begin{equation*}
+  \text{E}[y] \ = \mu + B\alpha_{B}+ C\alpha_{C} + BC(\alpha\alpha)_{BC}
+\end{equation*}
+
+\end{column}
+\begin{column}{0.35\linewidth}
+\centering
+\tiny{Santantonio, Jannink and Sorrells (2019b; Genetics)}
+
+\vspace{1mm}
+
+\includegraphics[width=0.4\linewidth]{"\string~/Dropbox/epiEff/cover"}%
+
+\end{column}
+\end{columns}
+
+\begin{columns}
+
+\begin{column}{0.3\linewidth}
+\begin{center}
+Additive $\times$ Additive \\
+(\highlite{statistical epistasis})
+\end{center}
+  \begin{table}
+  \begin{tabular}{l|cc}
+         & $CC$& $cc$ \\ \hline 
+    $BB$ & $2a$ & $0$ \\ 
+    $bb$ & $0$ & $2a$ \\ 
+    \end{tabular} 
+  \end{table}
+\end{column}
+
+\begin{column}{0.3\linewidth}
+\begin{center}
+Duplicate Factor \\
+(\highlite{functional epistasis})
+\end{center}
+\begin{table}
+\begin{tabular}{l|cc}
+     & $CC$ & $cc$ \\ \hline 
+  $BB$ & $a$ & $a$ \\ 
+  $bb$ & $a$ & $0$ \\ 
+  \end{tabular} 
+\end{table}
+\end{column}
+
+\begin{column}{0.38\linewidth}
+\pause
+\begin{center}
+Subfunctionalization \\
+(\highlite{subfunctional epistasis})
+\end{center}
+\begin{table}
+  \begin{tabular}{l|cc}
+     & $CC$ & $cc$ \\ \hline 
+  $BB$ & $s(a^\star + \tilde{a})$ & $a^\star$ \\ 
+  $bb$ & $\tilde{a}$ & 0 \\ 
+  \end{tabular} 
+\end{table}
+
+\end{column}
+\end{columns}
+}
+
+\subsection{Subfunctionalization}
+
+\frame{\frametitle{Subfunctionalization Epistasis}
+\begin{columns}
+\begin{column}{0.70\linewidth}
+\centering
+Let $a$ be the effect of a functional allele (or haplotype),
+\begin{tikzpicture}[node distance=3cm, draw = DarkGray]
+  \node (invisT) at (1, 4) {};
+  \node (invisB) at (1, 2) {};
+  \node (E) at (0, 3) {Mutation};
+  \node (A) at (4, 4) {$a$};
+  \node (ancestor) at (6, 4) {Ancestor};
+  \node (B) at (2, 1) {$a^\star$};
+  \node (decB) at (0, 1) {Descendant 1};
+  \node (C) at (6, 1) {$\tilde{a}$};
+  \node (decC) at (8, 1) {Descendant 2};
+  \draw [thick,->] (A) -- (B);
+  \draw [thick,->] (A) -- (C);
+  \draw [thick,->] (invisT) -- (invisB);
+  \pause
+  \node (hybrid) at (4, 0) {$s(a^\star + \tilde{a})$};
+  \node (allopoly) at (7, 0) {Allopolyploid};
+  \draw [thick, ->] (B) -- (hybrid);
+  \draw [thick, ->] (C) -- (hybrid);
+  \node (d) at (4, -1) {$s$ = subfunctionalization coefficient};
+\end{tikzpicture}
+\end{column}
+\begin{column}{0.3\linewidth}
+
+\visible<3-6>{
+\begin{tikzpicture}
+  \coordinate [label={[label distance=0.2cm]180:1}] (one) at (0, 3) {};
+  \coordinate [label={[label distance=0.2cm]180:1/2}] (half) at (0, 0) {};
+
+  \node (d) at (0,5) {$s$};
+  \pause
+  \draw[thick] (-0.1, 3) -- (one);
+  \draw[thick] (-0.1, 0) -- (half);
+  \draw[thick, <->] (0, 4.5) -- (0, -1.5);
+  \pause
+  \node [label={[label distance=0.2cm]0:Redundant}](d) at (0,0) {};
+  \node [label={[label distance=0.2cm]0:Additive}](d) at (0,3) {};
+\pause
+    \draw [decorate,decoration={brace,amplitude=7pt, raise=4pt},yshift=0pt, xshift=-0.05cm]
+    (0,2.75) -- (0,0.25) node [midway,xshift=2.1cm] {Subfunctionalization};
+  \end{tikzpicture}
+}
+\end{column}
+\end{columns}
+}
+
+
+
+\subsection{An example: Rht1}
+\frame{
+\begin{columns}
+
+\begin{column}{0.5\linewidth}
+\small Caledonia $\times$ NY8080 \\ 
+\textit{Rht-B1} $\times$ \textit{Rht-D1}
+
+\begin{itemize}
+  \item 158 RILs
+  \item Segregating for two homeologous dwarfing genes
+
+\end{itemize}
+\pause 
+
+\vspace{3mm}
+\visible<9-11>{
+Subfunctionalization of Dwarfing Genes
+\begin{itemize}
+  \item $1 + 1 \neq 2$
+  \item functional redundancy
+\end{itemize}  
+}
+\end{column}
+
+\begin{column}{0.5\linewidth}
+\begin{center}
+\includegraphics<1>[width = \linewidth, page = 1]{"\string~/Dropbox/Calx8080/rht1epiPlot"}% 
+\includegraphics<2>[width = \linewidth, page = 2]{"\string~/Dropbox/Calx8080/rht1epiPlot"}% 
+\includegraphics<3>[width = \linewidth, page = 3]{"\string~/Dropbox/Calx8080/rht1epiPlot"}% 
+\includegraphics<4>[width = \linewidth, page = 4]{"\string~/Dropbox/Calx8080/rht1epiPlot"}% 
+\includegraphics<5>[width = \linewidth, page = 5]{"\string~/Dropbox/Calx8080/rht1epiPlot"}% 
+\includegraphics<6>[width = \linewidth, page = 6]{"\string~/Dropbox/Calx8080/rht1epiPlot"}% 
+\includegraphics<7>[width = \linewidth, page = 7]{"\string~/Dropbox/Calx8080/rht1epiPlot"}% 
+\includegraphics<8>[width = \linewidth, page = 8]{"\string~/Dropbox/Calx8080/rht1epiPlot"}% 
+\includegraphics<9>[width = \linewidth, page = 9]{"\string~/Dropbox/Calx8080/rht1epiPlot"}%
+\includegraphics<10>[width = \linewidth, page = 10]{"\string~/Dropbox/Calx8080/rht1epiPlot"}%
+% \includegraphics<11>[width = \linewidth, page = 11]{"\string~/Dropbox/Calx8080/rht1epiPlot"}%
+\end{center}
+\end{column}
+\end{columns}
+
+}
+
+
+\subsection{Homeologous Marker Sets}
+
+
+\frame{
+ \frametitle{Homeoallelic Marker Sets}
+\begin{columns}
+\begin{column}{0.5\linewidth}
+  % \includegraphics[width = \linewidth]{"\string~/Dropbox/MasterGenotypeswithOHMI/HomeoSetCircleSampleColor1"} 
+  \includegraphics<1>[width = 0.9\linewidth]{"\string~/Dropbox/MasterGenotypeswithOHMI/HomeoSetCircleSampleColor0"}%
+  \includegraphics<2>[width = 0.9\linewidth]{"\string~/Dropbox/MasterGenotypeswithOHMI/HomeoSetCircleSampleColor1"}%
+  \includegraphics<3>[width = 0.9\linewidth]{"\string~/Dropbox/MasterGenotypeswithOHMI/HomeoSetCircleSampleColor2"}% 
+\end{column}
+
+\begin{column}{0.5\linewidth}
+\visible<1-3>{
+
+IWGSC RefSeq v1.0 genome
+\begin{itemize}
+  \item 110,790 coding sequences 
+  \item Align CDS to self
+\end{itemize}
+}
+
+\visible<2-3>{
+Alignments
+\begin{itemize}
+    \item 24,695 singletons, 20,319 multi-align
+    \item 23,796 homeologous gene sets 
+  \begin{itemize}
+    \item 18,184 triplicates
+    \item 5,612 duplicates
+    \item $\sim$ 60\% gene space
+  \end{itemize}  
+\end{itemize}
+}
+\visible<3>{
+Anchor closest GBS marker
+\begin{itemize}
+\item 10,172 marker sets
+  \begin{itemize}
+    \item 6,142 triplicates
+    \item 3,985 duplicates 
+  \end{itemize}  
+\end{itemize}
+}
+\end{column}
+\end{columns}
+}
+
+
+\subsection{Significant homeologous interactions}
+
+\frame{
+\begin{columns}
+\begin{column}{0.5\linewidth}
+\includegraphics<1>[width = \linewidth, page = 1]{"\string~/Dropbox/MasterGenotypeswithOHMI/CircleManhattanNoBridges"}%
+\includegraphics<2>[width = \linewidth, page = 1]{"\string~/Dropbox/MasterGenotypeswithOHMI/CircleManhattan"}
+\end{column}
+
+\begin{column}{0.5\linewidth}
+Additive GWAS 
+\begin{itemize}
+  \item Few large effect QTL
+  \item But high prediction accuracy
+
+\begin{itemize}
+  \item Many small effect loci
+\end{itemize}
+
+\end{itemize}
+
+\pause
+
+\vspace{3mm}
+
+Homeologous Epistasis GWAS 
+\begin{itemize}
+  \item Few large effect interactions
+  \item Pattern genome-wide?
+  \item Increase in prediction accuracy?
+\end{itemize}
+
+\end{column}
+\end{columns}
+
+
+}
+
+
+
+
+\section{Evidence of Subfunctionalization}
+
+\subsection{Additive effects vs 2-way interactions}
+
+\frame{
+\begin{columns}
+\begin{column}{0.5\linewidth}
+  \begin{center}
+    % \includegraphics[width = 0.9\linewidth]{"\string~/Dropbox/MasterGenotypeswithOHMI/effPlotsLowVarHighAdd/Homeo_twoWayEffectBetaOrientByEff_LowVarHighAdd01by01pickSignAllOrient"} 
+    \includegraphics[width = 0.9\linewidth]{effectPlot} 
+  \end{center} 
+\end{column}
+
+\begin{column}{0.5\linewidth}
+Additive vs 2-way Interactions
+\begin{itemize}
+  \item Negative trend
+  \item $\frac{1}{2} < d < 1$
+  \item ``less than additive''
+\end{itemize}
+
+
+\vspace{3mm}
+
+Subfunctionalization
+\begin{itemize}
+  \item redundant function
+\end{itemize}
+
+\end{column}
+\end{columns}
+
+
+}
+
+\subsection{Prediction Accuracy}
+
+
+\subsection{Additive Effects and Interactions}
+
+\frame{\frametitle{Homeologous interactions explain much of non-additive genetic signal}
+
+\begin{columns}
+\begin{column}{0.5\linewidth}
+  \begin{itemize}
+    \visible<1-3>{\item How much non-additive genetic signal is explained by homeologous interactions?}
+    \visible<3>{\item $\sim$ 60-75\% }
+  \end{itemize}
+\end{column}
+\begin{column}{0.5\linewidth}
+\includegraphics<1>[page = 1, width=0.8\linewidth]{"\string~/Dropbox/MasterGenotypeswithOHMI/predAccBarPlotHomeoBig"}%
+\includegraphics<2>[page = 2, width=0.8\linewidth]{"\string~/Dropbox/MasterGenotypeswithOHMI/predAccBarPlotHomeoBig"}%
+\includegraphics<3>[page = 3, width=0.8\linewidth]{"\string~/Dropbox/MasterGenotypeswithOHMI/predAccBarPlotHomeoBig"}%
+\end{column}
+\end{columns}
+}
+
+
+\subsection{Summary of Homeoallelic Epistasis}
+
+\frame{\frametitle{Summary of Homeoallelic Epistasis}
+\begin{columns}
+\begin{column}{0.15\linewidth}
+  \includegraphics[page=12, clip, trim = 0in 0in 8.5in 0in, height=0.85\textheight]{"\string~/Dropbox/CUpres/armCartoon2"}
+\end{column}
+
+
+\begin{column}{0.8\linewidth}
+
+% Homeoallelic interactions tend to be less than additive
+%  \begin{itemize}
+%     \item Suggests global subfunctionalization of homeologous orthologs
+%   \end{itemize}
+% \vspace{5mm}
+% \pause 
+% Homeoallelic pairs explain more than half of the non-additive genetic signal
+%  \begin{itemize}
+%     \item GY not affected, too polygenic to detect?
+%   \end{itemize}
+% \vspace{5mm}
+% \pause
+Opportunity to fix advantageous homeoallelic pairs
+ \begin{itemize}
+    \item Establish heterozygosity across subgenomes
+    \item Immortalize through inbreeding
+  \end{itemize}
+\vspace{5mm}
+\highlite{\emph{Capsicum}, a large genome in flux?}
+ \begin{itemize}
+    \item Find and fix interacting loci?
+    \begin{itemize}
+    \item Is \emph{Phytopthera} resistance an epistatic network?
+    \item What about capsaicinoid variability? 
+  \end{itemize}
+    \item What role do transposons play?   
+    \begin{itemize}
+    \item Somatic mutations driving variability?
+    % \item What about capsaicin variability? 
+  \end{itemize}
+\end{itemize}
+  
+
+  \end{column}
+  \end{columns}
+
+}
+
+
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.3] {\includegraphics[height=\paperheight,width=\paperwidth]{"\string~/Dropbox/CUpres/truck"}};}
+
+\frame{
+  \begin{tikzpicture}
+    \node (epiEffGenet) at (7, -5) {\includegraphics[width = 0.45\linewidth]{epiEffGenet}};
+    \node (logo) at (5, -4) {\includegraphics[width = 0.15\linewidth]{geneticsLogo}};
+    \node (epiCovG3) at (3.5, -2.5) {\includegraphics[width = 0.45\linewidth]{epiCovG3}};
+    \node (lowResG3) at (0, 0) {\includegraphics[width = 0.45\linewidth]{lowResG3}};
+  \end{tikzpicture}
+}
+\usebackgroundtemplate{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% END WHEAT SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Plant Breeding}
+\subsection{Outline}
+\frame{
+\begin{columns}
+\begin{column}{0.3\linewidth}
+{\color{lgray}Plant breeding}
+\begin{itemize}
+\item {\color{lgray}Multi-disciplinary }
+\item {\color{lgray}Team oriented}
+\end{itemize}
+\vspace{3mm}
+{\color{lgray}Two and a half stories}
+\begin{itemize}
+  \item {\color{lgray}Subgenome interactions in wheat}
+  \item Transitioning to a $21^\text{st}$ Century breeding program
+  % \item {\color{lgray}Breeding program optimization}
+  \item {\color{lgray}Integrating all the latest technologies}
+\end{itemize}
+\end{column}
+\begin{column}{0.7\linewidth}
+\centering
+% \frametitle{Technology integration for advancing plant breeding}
+  \begin{tikzpicture}
+% helix
+      \begin{scope}[domain=1.9:13.1, samples=101, xshift = 0cm, yshift = -1cm, scale=0.18, rotate = 60]
+          \foreach \x in {2, ...,13}{
+            \draw[thick, \dnabridge, line cap=round] (\x,{-sin(\x*36)}) -- (\x,{sin(\x*36)});
+          }
+          \draw[\dnaA, very thick, line cap=round] plot (\x,{sin(\x*36)});
+          \draw[\dnaB, very thick, line cap=round] plot (\x,{-sin(\x*36)});
+          \node at (5,8) {\begin{tabular}{c} Genome-wide\\markers \end{tabular}};
+      \end{scope}
+
+      \begin{scope}[xshift = 5.5cm, yshift = 1cm, scale=0.15]
+          \foreach \x in {-9, ...,9}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 0.5] (\x*0.5 - 0.1, 0) rectangle (\x*0.5 + 0.1, -2);
+          }
+          \foreach \x in {-4, ...,4}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*0.75 - 0.25, -2.5) rectangle (\x*0.75 +0.25, -4.5);
+          }
+          \foreach \x in {-2, ...,2}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x-0.35, -5) rectangle (\x+0.35, -7);
+          }
+          \foreach \x in {-1, ...,1}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*1.25-0.45, -7.5) rectangle (\x*1.25+0.45, -10.5);
+          }
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (-0.45, -11) rectangle (0.45, -14);
+        \node at (10,-7) {\begin{tabular}{c} Ground\\phenotyping \end{tabular}};
+
+      \end{scope}
+
+      % drone
+      \begin{scope}[xshift = 6cm, yshift = -2.5cm, scale=0.14]
+        \draw[draw = \graycol, fill = \graycol] (0, 0) ellipse (6 and 0.5);
+        \draw[draw = \graycol, fill = \graycol] (6, 1) ellipse (0.2 and 1);
+        \draw[draw = \graycol, fill = \graycol] (-6, 1) ellipse (0.2 and 1);
+        \draw[draw = \graycol, fill = \graycol] (6, 2) circle (0.2);
+        \draw[draw = \graycol, fill = \graycol] (-6, 2) circle (0.2);
+        \draw[draw = \graycol, fill = \graycol] (4.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \graycol, fill = \graycol] (-4.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \graycol, fill = \graycol] (7.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \graycol, fill = \graycol] (-7.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \graycol, fill = \graycol, rounded corners = 1] (-2, -0.7) rectangle (2, -3);
+        \draw[draw = white, fill = black, thick] (0.7, -2) circle (0.7);
+        \fill[draw = white, fill = white] (0.5, -1.8) circle (0.3);
+        \node(center) at (0,-7) {\begin{tabular}{c} High throughput\\phenotyping \end{tabular}};
+      \end{scope}
+    
+      % database
+      \begin{scope}[xshift = 3cm, yshift = -3.7cm, scale=0.12]
+          \node[database,label=below:Data management,database radius=0.75cm,database segment height=0.325cm, \dbcol, very thick] at (0,0) {};
+      \end{scope}
+
+    \begin{scope}[xshift=0cm, yshift=-2.5cm, rotate=0, scale=0.25]
+      \fill[\gearcol] circle (2.5cm);
+      \draw[thick, fill = \gearcol] \gear{8}{2.5}{3}{20}{4}{16};
+      \draw[thick, dgray, fill=white] (0cm,0cm) circle(2cm);
+      \node[align=center, circle,inner sep=0pt, minimum size=3cm] (gp) at (0, 0) {\tiny{$\ \ \begin{aligned}\sum^P_{i=1} \alpha_i \end{aligned}$}};
+      \node at (0, -5) {\begin{tabular}{c} Statistics \&\\machine learning \end{tabular}};
+    \end{scope}
+  
+  \begin{scope}[xshift = 3cm, yshift = 1.6cm, scale=1]
+    \node (wheatbig) at (0,0) {\includegraphics[height = 1.6cm]{"\string~/Dropbox/wheatCartoons/aestivumDark180"}};
+    \node (wheatbig) at (0,1) {Organism biology};
+  \end{scope}
+  
+  \begin{scope}[xshift=3cm, yshift=-1cm, scale=1]
+    % \draw [->,\graycol, very thick] ([shift=(445:1.5cm)] 0,0) arc (445:335:1.5cm);
+    % \draw [->,\graycol, very thick] ([shift=(205:1.5cm)] 0,0) arc (205:95:1.5cm);
+    % \draw [->,\graycol, very thick] ([shift=(325:1.5cm)] 0,0) arc (325:215:1.5cm);
+    % \node (plbrg) at (0,0) {Plant Breeding};
+    \node[draw,thick, LightGray, fill = DarkGray, minimum width=2cm,minimum height=1cm, rounded corners = 0.5cm] (plbrg) at (0,0) {Plant Breeding};
+  \end{scope}
+
+\end{tikzpicture}%
+\end{column}
+\end{columns}
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% BEGIN Fronteirs section %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\section{Transitioning to a $21^\text{st}$ Century breeding program}
+
+\subsection{Breeder's equation}
+
+
+\frame{
+\frametitle{How can we best exploit the breeder's equation?}
+  \centering
+    \begin{tikzpicture}
+    % \node at (0, 0) {\begin{equation} R = \Delta G = \frac{ir\sigma_a}{L} \end{equation}};
+    
+    % \node (eq) at (0, 0) {\Huge{$R = \Delta G = \frac{i \ r \ \sigma_a}{L}$}};
+    \node (eq) at (0, 0) {\Huge{$R = \frac{i \ r \ \sigma_a}{L}$}};
+    
+    \visible<2->{\node (R) at (-3, -2) {\Large{response to selection}};}
+    \visible<2->{\draw[->, thick] (R) -- (-1.5, -0.5);}
+
+    \visible<2>{\node (i) at (-2.5, 2) {\Large{intensity of selection}};}
+    \visible<2->{\draw[->, thick] (i) -- (0, 0.6);}
+    
+    \visible<2->{\node (r) at (1, 3) {\Large{reliability}};}
+    \visible<2->{\draw[->, thick] (r) -- (0.7, 0.6);}
+    
+    \visible<2->{\node (Va) at (4, 2) {\Large{additive genetic variance}};}
+    \visible<2->{\draw[->, thick] (Va) -- (1.5, 0.6);}
+    
+    
+    \visible<2-3>{\node (L) at (3, -2) {\Large{cycles per year}};}
+    \visible<2->{\draw[->, thick] (L) -- (1, -0.7);}
+
+
+    \visible<3->{\node (i) at (-2.5, 2) {\highlite{\Large{intensity of selection}}};}
+    \visible<4->{\node (L) at (3, -2) {\highlite{\Large{cycles per year, i.e. \emph{time}}}};}
+% \visible<8>{\node (i) at (-2.5, 2) {\highlite{\Large{intensity of selection}}};}
+
+
+    \end{tikzpicture}
+}
+
+\subsection{Genomic selection}
+\frame{
+  \frametitle{Incorporating Genomic Selection}
+
+  \begin{columns}
+  \begin{column}{0.6\linewidth}
+  \begin{tikzpicture}
+  
+  \node at (1.5, 3) {Phenotype obs};
+  \node at (4.5, 3) {Phenotype unobs};
+  \node[rotate = 90] at (-1, 1.375) {DNA obs};
+  \node[rotate = 90] at (-1, -1.675) {DNA unobs};
+
+  \draw[thick] (-0.5,2.5) -- (-0.5, -3) -- (6.5, -3) -- (6.5, 2.5) --(-0.5, 2.5);
+  \draw[thick] (-0.5,-0.25) -- (6.5, -0.25);
+  \draw[thick] (3,2.5) -- (3, -3);
+
+  \visible<2->{\draw[->, thick, Carnellian] (2.3, 1) -- (5, 1);}
+
+      \begin{scope}[domain=1.9:13.1, samples=101, xshift = 0cm, yshift = 0cm, scale=0.18, rotate = 60]
+          \foreach \x in {2, ...,13}{
+            \draw[thick, \dnabridge, line cap=round] (\x,{-sin(\x*36)}) -- (\x,{sin(\x*36)});
+          }
+          \draw[\dnaA, very thick, line cap=round] plot (\x,{sin(\x*36)});
+          \draw[\dnaB, very thick, line cap=round] plot (\x,{-sin(\x*36)});
+      \end{scope}
+      \begin{scope}[xshift = 2cm, yshift = 1cm, scale=1]
+        \node (wheatbig) at (0,0) {\includegraphics[height = 1.6cm]{"\string~/Dropbox/wheatCartoons/aestivum"}};
+      \end{scope}
+
+    \begin{scope}[domain=1.9:13.1, samples=101, xshift = 3.5cm, yshift = 0cm, scale=0.18, rotate = 60]
+          \foreach \x in {2, ...,13}{
+            \draw[thick, \dnabridge, line cap=round] (\x,{-sin(\x*36)}) -- (\x,{sin(\x*36)});
+          }
+          \draw[\dnaA, very thick, line cap=round] plot (\x,{sin(\x*36)});
+          \draw[\dnaB, very thick, line cap=round] plot (\x,{-sin(\x*36)});
+      \end{scope}
+      \begin{scope}[xshift = 5.5cm, yshift = 1cm, scale=1]
+        \node (wheatbig) at (0,0) {\includegraphics[height = 1.6cm]{"\string~/Dropbox/wheatCartoons/aestivumDark180"}};
+      \end{scope}
+
+    \begin{scope}[domain=1.9:13.1, samples=101, xshift = 0cm, yshift = -2.8cm, scale=0.18, rotate = 60]
+          \foreach \x in {2, ...,13}{
+            \draw[thick, \graycol, line cap=round] (\x,{-sin(\x*36)}) -- (\x,{sin(\x*36)});
+          }
+          \draw[\graycol, very thick, line cap=round] plot (\x,{sin(\x*36)});
+          \draw[\graycol, very thick, line cap=round] plot (\x,{-sin(\x*36)});
+      \end{scope}
+      \begin{scope}[xshift = 2cm, yshift = -1.8cm, scale=1]
+        \node (wheatbig) at (0,0) {\includegraphics[height = 1.6cm]{"\string~/Dropbox/wheatCartoons/aestivum"}};
+      \end{scope}
+
+    \begin{scope}[domain=1.9:13.1, samples=101, xshift = 3.5cm, yshift = -2.8cm, scale=0.18, rotate = 60]
+          \foreach \x in {2, ...,13}{
+            \draw[thick, \graycol, line cap=round] (\x,{-sin(\x*36)}) -- (\x,{sin(\x*36)});
+          }
+          \draw[\graycol, very thick, line cap=round] plot (\x,{sin(\x*36)});
+          \draw[\graycol, very thick, line cap=round] plot (\x,{-sin(\x*36)});
+      \end{scope}
+      \begin{scope}[xshift = 5.5cm, yshift = -1.8cm, scale=1]
+        \node (wheatbig) at (0,0) {\includegraphics[height = 1.6cm]{"\string~/Dropbox/wheatCartoons/aestivumDark180"}};
+      \end{scope}
+
+  \end{tikzpicture}
+
+  \end{column}
+  \begin{column}{0.4\linewidth}
+  
+  Genomic prediction
+  \begin{itemize}
+    \item Estimate all marker effects 
+    \item Predict unobserved lines based on markers
+  \begin{itemize}
+    \item \highlite{with some accuracy $< 1$}
+  \end{itemize}
+  \end{itemize}
+  
+  \visible<3>{
+  Genomic selection
+  \begin{itemize}
+  \item Make breeding decisions based on genomic predictions
+  \begin{itemize}
+    \item \highlite{increase selection intensity}
+    \item \highlite{reduce cycle time}
+  \end{itemize}    
+  \end{itemize}
+}
+  \end{column}
+  \end{columns}
+  
+
+}
+
+\section{Increased selection intensity}
+\subsection{Traditional breeding}
+
+
+% \frame{\frametitle{$21^\text{st}$ Century Plant Breeding Pipeline}
+\frame{\frametitle{A traditional breeding program}
+% High throughput phenotypes serve \highlite{2} purposes for breeding:
+
+\begin{columns}
+\begin{column}{0.3\linewidth}
+  % \highlite{How do we transition}
+\highlite{Traditional Breeding}
+\vspace{2mm}
+
+  \begin{itemize}
+    \item Accurate
+    \begin{itemize}
+      \item Extensive testing 
+    \end{itemize}
+\vspace{2mm}
+\visible<6->{    
+    \item Slow
+    \begin{itemize}
+      \item Multiple trial years 
+      \item Long generation intervals
+    \end{itemize}% \pause
+  \end{itemize}
+}
+\vfill
+
+\end{column}
+\begin{column}{0.7\linewidth}
+  % \begin{figure}[width = \linewidth]
+% \vspace{-1cm}
+  \begin{tikzpicture}[scale = 1]
+  \begin{scope}[xshift = 0cm, yshift = 0cm, scale=0.4]
+    \foreach \x in {-9, ...,9}{
+    \visible<1->{\draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 0.5] (\x*0.5 - 0.1, 0) rectangle (\x*0.5 + 0.1, -2);}
+    }
+    \foreach \x in {-4, ...,4}{
+    \visible<2->{\draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*0.75 - 0.25, -2.5) rectangle (\x*0.75 +0.25, -4.5);}
+    }
+    \foreach \x in {-2, ...,2}{
+    \visible<3->{\draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x-0.35, -5) rectangle (\x+0.35, -7);}
+    }
+    \foreach \x in {-1, ...,1}{
+    \visible<4->{\draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*1.25-0.45, -7.5) rectangle (\x*1.25+0.45, -10.5);}
+    }
+    \node[align=left] at (0,1) {\highlite{Variety Development Pipeline}};
+    \visible<1->{\node (y1) at (5,-1) {};}
+    \visible<1->{\node (y2) at (4,-3.5) {};}
+    \visible<1->{\node (y3) at (3,-6) {};}
+    \visible<1->{\node[align=left] at (8,-1) {Year 1};}
+    \visible<2->{\node[align=left] at (8,-3.5) {Year 2};}
+    \visible<3->{\node[align=left] at (8,-6) {Year 3};}
+    \visible<4->{\node[align=left] at (8,-9) {Year 4-5};}
+    \visible<5->{\node[align=left] at (8,-12.5) {Year 6};}
+    \visible<1->{\node[align=left] at (-10,-1) {10,000's, 1 Env, unrep};}
+    \visible<2->{\node[align=left] at (-10,-3.5) {1,000's, 1 Env, low reps};}
+    \visible<3->{\node[align=left] at (-10,-6) {100's, few Envs, moderate reps};}
+    \visible<4->{\node[align=left] at (-10,-9) {10's, many Env, high reps};}
+    \visible<5->{\node[align=left] at (-10,-12.5) {Variety release};}
+    \end{scope}
+    \begin{scope}[xshift = 0.1mm, yshift = -5cm, scale=1]
+      \visible<5->{\node[label=below:``Pistol Pete''] (pete) at (0,0) {\includegraphics[height = 1cm]{"\string~/Dropbox/wheatCartoons/aestivum"}};}
+    \end{scope}
+    \visible<6>{\draw [->, very thick, looseness=1.6] (pete) to [out=15, in = 330] (y1);}
+    \visible<7>{\draw [->, very thick, looseness=1.6] (y3) to [out=15, in = 340] (y1);}
+
+  \end{tikzpicture}
+% \end{figure}
+\end{column}
+
+
+\end{columns}
+}
+
+
+\subsection{Increasing population with genomic prediction}
+
+% \frame{\frametitle{$21^\text{st}$ Century Plant Breeding Pipeline}
+\frame{\frametitle{Increasing population size increases intensity}
+% High throughput phenotypes serve \highlite{2} purposes for breeding:
+
+% \begin{tikzpicture}
+\begin{columns}
+\begin{column}{0.4\linewidth}
+\highlite{Genomic Selection}
+  \begin{itemize}
+    \item Less accurate
+    \begin{itemize}
+      \item Less phenotypic information
+\visible<2->{
+    \end{itemize}
+    \item More intense
+    \begin{itemize}
+      \item Increased number of selection candidates in early trials
+    \end{itemize}% \pause
+}
+
+
+\visible<3->{
+    \item 1-2k markers $<$ \$10/line 
+    \begin{itemize}
+      \item Need to make up for extra costs
+      \item Reduce \# of plots, less reps/line
+      \item Trade for replication at a genetic level
+    \end{itemize}% \pause
+
+    % \item Faster
+    % \begin{itemize}
+    %   \item Short generation intervals
+    % \end{itemize}% \pause
+}
+  \end{itemize}
+% Increase number of selection candidates
+% \visible<2->{
+% \begin{itemize}
+% \item Prediction of early performance
+% \item Increased intensity in early stage trials
+% \end{itemize}
+% }
+% \visible<3->{
+% \highlite{But, genotyping will add to cost...}
+% \begin{itemize}
+% \item Reduce the number of yield plots 
+% \item in middle stages
+% \end{itemize}
+
+\end{column}
+
+\begin{column}{0.2\linewidth}
+\centering
+
+\begin{tikzpicture}
+\begin{scope}[yshift=0cm,rotate=0]
+   \node {\begin{tikzpicture}[scale = 0.3]
+      \begin{axis}[%no markers, 
+      ticks=none,
+      domain=-3:3, 
+      samples=100,
+      axis x line = middle,
+      x axis line style=-,
+      % xticklabels=\empty,
+      axis y line=none]
+      \addplot [fill=white, draw=none, domain=-3:3] {gauss(0,1)} \closedcycle;
+      \addplot [fill=black, draw=none, domain=0.524:3] {gauss(0,1)} \closedcycle;
+      \addplot[black] {gauss(0,1)};
+      \end{axis}
+    \end{tikzpicture}};
+
+   \visible<2->{\node at (0, -2) {\begin{tikzpicture}[scale = 0.6, yscale = 0.5]
+      \begin{axis}[%no markers, 
+      ticks=none,
+      domain=-6:6, 
+      samples=100,
+      axis x line = middle,
+      x axis line style=-,
+      % xticklabels=\empty,
+      axis y line=none]
+      \addplot [fill=white, draw=none, domain=-6:6] {gauss(0,2)} \closedcycle;
+      \addplot [fill=black, draw=none, domain=2.07:6] {gauss(0,2)} \closedcycle;
+      \addplot[black] {gauss(0,2)};
+      \end{axis}
+    \end{tikzpicture}};
+\draw[Carnellian] (0,0.7) -- (0, -2.7);
+}
+\end{scope}
+
+\end{tikzpicture}
+\end{column}
+
+\begin{column}{0.4\linewidth}
+  % \begin{figure}[width = \linewidth]
+% \vspace{-1cm}
+  \begin{tikzpicture}[scale = 1]
+  \begin{scope}[xshift = 0cm, yshift = 0cm, scale=0.4]
+    \foreach \x in {-14, ...,10}{
+    \visible<2->{\draw[draw = \graycol, fill = \graycol, thick, rounded corners = 0.5] (\x*0.5 - 0.1, 0) rectangle (\x*0.5 + 0.1, -2);}
+    }
+    \foreach \x in {-10, ...,14}{
+    \visible<2->{\draw[draw = \graycol, fill = \graycol, thick, rounded corners = 0.5] (\x*0.5 - 0.1, 0) rectangle (\x*0.5 + 0.1, -2);}
+    }
+
+    \foreach \x in {-7, -6, -5, 5, 6, 7}{
+    \visible<2->{\draw[draw = \graycol, fill = \graycol, thick, rounded corners = 1] (\x*0.75 - 0.25, -2.5) rectangle (\x*0.75 +0.25, -4.5);}
+    }
+    \foreach \x in {-3,3}{
+    \visible<2->{\draw[draw = \graycol, fill = \graycol, thick, rounded corners = 1] (\x-0.35, -5) rectangle (\x+0.35, -7);}
+    }
+
+
+    \foreach \x in {-9, ...,9}{
+    \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 0.5] (\x*0.5 - 0.1, 0) rectangle (\x*0.5 + 0.1, -2);
+    }
+    \foreach \x in {-4, ...,4}{
+    \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*0.75 - 0.25, -2.5) rectangle (\x*0.75 +0.25, -4.5);
+    }
+    \foreach \x in {-2, ...,2}{
+    \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x-0.35, -5) rectangle (\x+0.35, -7);
+    }
+    \foreach \x in {-1, ...,1}{
+    \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*1.25-0.45, -7.5) rectangle (\x*1.25+0.45, -10.5);
+    }
+    \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (-0.45, -11) rectangle (0.45, -14);
+    \node[align=left] at (0,1) {\highlite{Variety Development Pipeline}};
+    \visible<1->{\node (y1) at (5,-1) {};}
+    \end{scope}
+    % \fill[bottom color=Carnellian, top color=Carnellian!50!white, anchor=south] (3.5, 0) -- (3.5, -5.5) --(2, -5.5) --(3.5, 0);
+    % \node[LightGray] at (3, -5) {$h^2$};
+]
+  \end{tikzpicture}
+% \end{figure}
+\end{column}
+
+\end{columns}
+}
+
+\subsection{Unobserved vs sparse testing prediction}
+
+\frame{\frametitle{Current model for genomic prediction works...}
+  \begin{columns}
+ 
+  \begin{column}{0.3\linewidth}
+  
+  % Two Environments
+  \begin{enumerate}
+    \item Observe half of population in both environments
+    \item Estimate genetic correlation of environments
+    \item Predict other half
+  \end{enumerate}
+  \end{column}
+
+
+  \begin{column}{0.3\linewidth}
+  \begin{tikzpicture}[scale = 0.7, auto,node distance=1cm,very thick]
+ 
+
+\draw[thick, draw=Navy] (0,0) rectangle(2, 4);
+\draw[thick, draw=Navy, fill=Navy] (0,2) rectangle(2, 4);
+\draw[thick, draw=Navy] (2.5,0) rectangle(4.5, 4);
+\draw[thick, draw=Navy, fill=Navy] (2.5,2) rectangle(4.5, 4);
+% \draw[thick, draw, fill=black] (0,1) rectangle(2, 2);
+
+\draw[->, draw=Carnellian] (1,3) to (1, 1.2);
+\draw[->, draw=Carnellian] (1,3) to (3.3, 1.2);
+% \draw[->, draw=Carnellian] (1,3) to (3.5, 1);
+\draw[->, draw=Carnellian] (3.5,3) to (1.2, 1.2);
+\draw[->, draw=Carnellian] (3.5,3) to (3.5, 1.2);
+
+% \begin{scope}[yshift=0cm,xshift=6cm,rotate=0]
+% \draw[thick, draw=Navy] (0,0) rectangle(2, 4);
+% \draw[thick, draw=Navy, fill=Navy] (0,2) rectangle(2, 4);
+% \draw[thick, draw=Navy] (2.5,0) rectangle(4.5, 4);
+% \draw[thick, draw=Navy, fill=Navy] (2.5,0) rectangle(4.5, 2);
+
+% \draw[->, draw=Carnellian] (1,3) to (3.3, 3);
+% \draw[->, draw=Carnellian] (1,3) to (1, 1.2);
+% % \draw[->, draw=Carnellian] (1,3) to (3.5, 1);
+% \draw[->, draw=Carnellian] (3.5,1) to (1.2, 1);
+% \draw[->, draw=Carnellian] (3.5,1) to (3.5, 2.8);
+
+
+% \end{scope}
+
+
+\node[align=center, rotate=90] (g) at (-1, 2) {\highlite{Genotypes}};
+\node[align=center] (env) at (2.5, 5.5) {\highlite{Environments}};
+
+\node[align=center] (irr) at (1, 4.5) {Optimal};
+\node[align=center] (rain) at (3.5, 4.5) {Drought};
+% \node[align=center] (chickpea) at (2.25, -0.5) {Chickpea};
+% \node[align=center] (e1) at (7, 4.5) {Optimal};
+% \node[align=center] (e2) at (9.5, 4.5) {Drought};
+
+\node[align=center] (e1) at (2.5, -1) {Unobserved / Full-sib \\ prediction};
+% \node[align=center] (e2) at (8, -1) {Sparse Testing};
+
+\begin{scope}[yshift=7cm,xshift=0.5cm,rotate=0]
+\node[thick, draw=Navy, fill=Navy, text = LightGray] (obs) at (0,0) {observed};
+\node[thick, draw=Navy, text = DarkGray] (unobs) at (3,0) {predicted};
+\end{scope}
+
+% \node[align=center] (maize) at (8.5, -0.5) {Maize};
+
+\end{tikzpicture}
+
+  \end{column}
+
+
+\pause
+  \begin{column}{0.4\linewidth}
+\centering
+  
+  \includegraphics[width= \linewidth]{"\string ~/Dropbox/plantGenomicsCongress/cimmytMaizeAcc"} \\
+  Beyene et al. 2020
+  \end{column}
+
+  \end{columns}
+
+}
+
+
+\frame{\frametitle{... but can we do better?}
+
+\begin{columns}
+\begin{column}{0.4\linewidth}
+  Genetic relationships known
+  \begin{itemize}
+    \item estimate genetic correlation of environments without replicating across 
+    \item Get to observe every line
+  \end{itemize}
+\end{column}
+\begin{column}{0.6\linewidth}
+\centering
+% \visible<3>{
+\begin{tikzpicture}[scale = 0.7, auto,node distance=1cm,very thick]
+ 
+\begin{scope}[yshift=7cm,xshift=4cm,rotate=0]
+\node[thick, draw=Navy, fill=Navy, text = LightGray] (obs) at (0,0) {observed};
+\node[thick, draw=Navy, text = DarkGray] (unobs) at (3,0) {predicted};
+\end{scope}
+
+\draw[thick, draw=Navy] (0,0) rectangle(2, 4);
+\draw[thick, draw=Navy, fill=Navy] (0,2) rectangle(2, 4);
+\draw[thick, draw=Navy] (2.5,0) rectangle(4.5, 4);
+\draw[thick, draw=Navy, fill=Navy] (2.5,2) rectangle(4.5, 4);
+% \draw[thick, draw, fill=black] (0,1) rectangle(2, 2);
+
+\draw[->, draw=Carnellian] (1,3) to (1, 1.2);
+\draw[->, draw=Carnellian] (1,3) to (3.3, 1.2);
+% \draw[->, draw=Carnellian] (1,3) to (3.5, 1);
+\draw[->, draw=Carnellian] (3.5,3) to (1.2, 1.2);
+\draw[->, draw=Carnellian] (3.5,3) to (3.5, 1.2);
+
+\node[align=center, rotate=90] (g) at (-1, 2) {\highlite{Genotypes}};
+\node[align=center] (env) at (5.5, 5.5) {\highlite{Environments}};
+
+\node[align=center] (irr) at (1, 4.5) {Optimal};
+\node[align=center] (rain) at (3.5, 4.5) {Drought};
+% \node[align=center] (chickpea) at (2.25, -0.5) {Chickpea};
+
+\node[align=center] (e1) at (2.5, -1) {Unobserved / Full-sib \\ prediction};
+
+\visible<2>{
+  
+\begin{scope}[yshift=0cm,xshift=6cm,rotate=0]
+\draw[thick, draw=Navy] (0,0) rectangle(2, 4);
+\draw[thick, draw=Navy, fill=Navy] (0,2) rectangle(2, 4);
+\draw[thick, draw=Navy] (2.5,0) rectangle(4.5, 4);
+\draw[thick, draw=Navy, fill=Navy] (2.5,0) rectangle(4.5, 2);
+
+\draw[->, draw=Carnellian] (1,3) to (3.3, 3);
+\draw[->, draw=Carnellian] (1,3) to (1, 1.2);
+% \draw[->, draw=Carnellian] (1,3) to (3.5, 1);
+\draw[->, draw=Carnellian] (3.5,1) to (1.2, 1);
+\draw[->, draw=Carnellian] (3.5,1) to (3.5, 2.8);
+
+\end{scope}
+
+
+\node[align=center] (e1) at (7, 4.5) {Optimal};
+\node[align=center] (e2) at (9.5, 4.5) {Drought};
+\node[align=center] (e2) at (8, -1) {Sparse Testing};
+% }
+% \node[align=center] (maize) at (8.5, -0.5) {Maize};
+
+}
+\end{tikzpicture}
+\end{column}
+\end{columns}
+
+}
+
+
+% \subsection{Sparse testing vs unobserved prediction}
+
+\frame{\frametitle{Sparse testing is (almost) uniformly superior to unobserved prediction}
+
+% \vspace{-0.2cm}
+
+% \hspace{2.5cm} CIMMYT Maize \hspace{5cm} \visible<2>{ICRISAT Chickpea}
+
+\vspace{-0.5cm}
+
+\begin{tikzpicture}
+\node at (0, 0) {\includegraphics<1-2>[width= 0.5\linewidth]{"\string /home/nsant/Dropbox/sparseTesting/sparseVsHalfMaizePres"}};
+\node at (8, 0) {\includegraphics<2>[width= 0.5\linewidth]{"\string /home/nsant/Dropbox/chickpeaGit/figures/sparseVsHalfChickpeaPres"}};
+
+\node at (0, 3.2) {CIMMYT Maize};
+\node at (8, 3.2) {ICRISAT Chickpea};
+
+\begin{scope}[yshift=2.2cm,xshift=1.2cm,scale=0.15]
+\draw[thick, draw=Navy] (0,0) rectangle(2, 4);
+\draw[thick, draw=Navy, fill=Navy] (0,2) rectangle(2, 4);
+\draw[thick, draw=Navy] (2.5,0) rectangle(4.5, 4);
+\draw[thick, draw=Navy, fill=Navy] (2.5,0) rectangle(4.5, 2);
+\end{scope}
+
+\begin{scope}[yshift=1cm,xshift=2cm,scale=0.15]
+\draw[thick, draw=Navy] (0,0) rectangle(2, 4);
+\draw[thick, draw=Navy, fill=Navy] (0,2) rectangle(2, 4);
+\draw[thick, draw=Navy] (2.5,0) rectangle(4.5, 4);
+\draw[thick, draw=Navy, fill=Navy] (2.5,2) rectangle(4.5, 4);
+\end{scope}
+
+
+\visible<2>{
+\begin{scope}[yshift=2.2cm,xshift=9.2cm,scale=0.15]
+\draw[thick, draw=Navy] (0,0) rectangle(2, 4);
+\draw[thick, draw=Navy, fill=Navy] (0,2) rectangle(2, 4);
+\draw[thick, draw=Navy] (2.5,0) rectangle(4.5, 4);
+\draw[thick, draw=Navy, fill=Navy] (2.5,0) rectangle(4.5, 2);
+\end{scope}
+
+\begin{scope}[yshift=1cm,xshift=10cm,scale=0.15]
+\draw[thick, draw=Navy] (0,0) rectangle(2, 4);
+\draw[thick, draw=Navy, fill=Navy] (0,2) rectangle(2, 4);
+\draw[thick, draw=Navy] (2.5,0) rectangle(4.5, 4);
+\draw[thick, draw=Navy, fill=Navy] (2.5,2) rectangle(4.5, 4);
+\end{scope}
+}
+
+\end{tikzpicture}
+
+}
+
+
+
+\section{Rapid cycling}
+\subsection{In theory}
+
+% \frame{\frametitle{$21^\text{st}$ Century Plant Breeding Pipeline}
+\frame{\frametitle{Rapid cycling greatly decreases $L$}
+% High throughput phenotypes serve \highlite{2} purposes for breeding:
+
+\begin{columns}
+\begin{column}{0.3\linewidth}
+  % \highlite{How do we transition}
+\highlite{Rapid Cycling}
+\begin{itemize}
+  \item Assume 3 cycles/year in greenhouse
+\end{itemize}
+
+\centering
+
+\begin{tikzpicture}
+    % \node (rcrs) at (0, 0) {\begin{tabular}{c} Recurrent\\Pop \end{tabular}};
+   \node (rcrs) at (0, 0) {\begin{tikzpicture}[scale = 0.2]
+      \begin{axis}[%no markers, 
+      ticks=none,
+      domain=-3:3, 
+      samples=100,
+      axis x line = middle,
+      x axis line style=-,
+      % xticklabels=\empty,
+      axis y line=none]
+      \addplot [fill=white, draw=none, domain=-3:3] {gauss(0,1)} \closedcycle;
+      \addplot [fill=dgray, draw=none, domain=0.524:3] {gauss(0,1)} \closedcycle;
+      \addplot[dgray] {gauss(0,1)};
+      \end{axis}
+    \end{tikzpicture}};
+
+    \visible<2->{\draw [->,dgray, very thick] ([shift=(445:1cm)] 0,0) arc (445:335:1cm);}
+    \visible<3->{\draw [->,dgray, very thick] ([shift=(325:1cm)] 0,0) arc (325:215:1cm);}
+    \visible<4->{\draw [->,dgray, very thick] ([shift=(205:1cm)] 0,0) arc (205:95:1cm);}
+    \visible<5->{\draw [->,dgray, very thick] ([shift=(445:1.25cm)] 0,0) arc (445:335:1.25cm);}
+    \visible<6->{\draw [->,dgray, very thick] ([shift=(325:1.25cm)] 0,0) arc (325:215:1.25cm);}
+    \visible<7->{\draw [->,dgray, very thick] ([shift=(205:1.25cm)] 0,0) arc (205:95:1.25cm);}
+    \visible<8->{\draw [->,dgray, very thick] ([shift=(445:1.5cm)] 0,0) arc (445:335:1.5cm);}
+    \visible<9->{\draw [->,dgray, very thick] ([shift=(325:1.5cm)] 0,0) arc (325:215:1.5cm);}
+    \visible<10->{\draw [->,dgray, very thick] ([shift=(205:1.5cm)] 0,0) arc (205:95:1.5cm);}
+    \visible<11->{\draw [->,dgray, very thick] ([shift=(445:1.75cm)] 0,0) arc (445:335:1.75cm);}
+    \visible<12->{\draw [->,dgray, very thick] ([shift=(325:1.75cm)] 0,0) arc (325:215:1.75cm);}
+    \visible<13->{\draw [->,dgray, very thick] ([shift=(205:1.75cm)] 0,0) arc (205:95:1.75cm);}
+\end{tikzpicture}
+
+
+\end{column}
+\begin{column}{0.4\linewidth}
+  % \begin{figure}[width = \linewidth]
+% \vspace{-1cm}
+  \begin{tikzpicture}[scale = 1]
+  \begin{scope}[xshift = 0cm, yshift = 0cm, scale=0.3]
+    \foreach \x in {-9, ...,9}{
+    \visible<1->{\draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 0.5] (\x*0.5 - 0.1, 0) rectangle (\x*0.5 + 0.1, -2);}
+    }
+    \foreach \x in {-4, ...,4}{
+    \visible<4->{\draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*0.75 - 0.25, -2.5) rectangle (\x*0.75 +0.25, -4.5);}
+    }
+    \foreach \x in {-2, ...,2}{
+    \visible<7->{\draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x-0.35, -5) rectangle (\x+0.35, -7);}
+    }
+    \foreach \x in {-1, ...,1}{
+    \visible<10->{\draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*1.25-0.45, -7.5) rectangle (\x*1.25+0.45, -10.5);}
+    }
+    \visible<13->{\draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (-0.45, -11) rectangle (0.45, -14);}
+    \node[align=left] at (0,1) {\highlite{Variety Development Pipeline}};
+    \node (y1) at (5,-1) {};
+    \node (y2) at (4,-3.5) {};
+    \node (y3) at (3,-6) {};
+    \visible<1->{\node[align=left] at (7,-1) {Year 1};}
+    \visible<4->{\node[align=left] at (7,-3.5) {Year 2};}
+    \visible<7->{\node[align=left] at (7,-6) {Year 3};}
+    \visible<10->{\node[align=left] at (7,-9) {Year 4};}
+    \visible<13->{\node[align=left] at (7,-12.5) {Year 5};}
+    \end{scope}
+    % \begin{scope}[xshift = 0.1mm, yshift = -5cm, scale=1]
+    %   \visible<5->{\node[label=below:``Pistol Pete''] (pete) at (0,0) {\includegraphics[height = 1cm]{"\string~/Dropbox/wheatCartoons/aestivum"}};}
+    % \end{scope}
+    \visible<14->{\draw [->, very thick, looseness=1.6] (0.3, -3.8) to [out=15, in = 330] (y1);}
+    % \visible<10>{\draw [->, very thick, looseness=1.6] (y3) to [out=15, in = 340] (y1);}
+
+  \end{tikzpicture}
+% \end{figure}
+\end{column}
+
+\begin{column}{0.3\linewidth}
+  \includegraphics<2>[page = 1, width = 0.9\linewidth]{../GSvsPS_1cyc}%
+  \includegraphics<3>[page = 2, width = 0.9\linewidth]{../GSvsPS_1cyc}%
+  \includegraphics<4>[page = 3, width = 0.9\linewidth]{../GSvsPS_1cyc}%
+  \includegraphics<5>[page = 4, width = 0.9\linewidth]{../GSvsPS_1cyc}%
+  \includegraphics<6>[page = 5, width = 0.9\linewidth]{../GSvsPS_1cyc}%
+  \includegraphics<7>[page = 6, width = 0.9\linewidth]{../GSvsPS_1cyc}%
+  \includegraphics<8>[page = 7, width = 0.9\linewidth]{../GSvsPS_1cyc}%
+  \includegraphics<9>[page = 8, width = 0.9\linewidth]{../GSvsPS_1cyc}%
+  \includegraphics<10>[page = 9, width = 0.9\linewidth]{../GSvsPS_1cyc}%
+  \includegraphics<11>[page = 10, width = 0.9\linewidth]{../GSvsPS_1cyc}%
+  \includegraphics<12>[page = 11, width = 0.9\linewidth]{../GSvsPS_1cyc}%
+  \includegraphics<13>[page = 12, width = 0.9\linewidth]{../GSvsPS_1cyc}%
+  \includegraphics<14>[page = 13, width = 0.9\linewidth]{../GSvsPS_1cyc}%
+\includegraphics<15>[page = 37, width = 0.9\linewidth]{../GSvsPS_3cyc}%
+\end{column}
+\end{columns}
+}
+
+
+
+
+
+% % \frame{\frametitle{$21^\text{st}$ Century Plant Breeding Pipeline}
+% \frame{\frametitle{How to transition to a tech/data-driven program?}
+% % High throughput phenotypes serve \highlite{2} purposes for breeding:
+
+% \begin{columns}
+% \begin{column}{0.3\linewidth}
+%   % \highlite{How do we transition}
+% \visible<1-3>{
+% \highlite{Traditional Breeding}
+%   \begin{itemize}
+%     \item Accurate
+%     \begin{itemize}
+%       \item Extensive testing 
+%     \end{itemize}
+    
+%     \item Slow
+%     \begin{itemize}
+%       \item Multiple trial years 
+%       \item Long generation intervals
+%     \end{itemize}% \pause
+%   \end{itemize}
+% }
+% \visible<2>{
+% \highlite{Genomic Selection}
+%   \begin{itemize}
+%     \item Less accurate
+%     \begin{itemize}
+%       \item Less phenotypic information
+%     \end{itemize}
+%     \item Fast
+%     \begin{itemize}
+%       \item Short generation intervals
+%     \end{itemize}% \pause
+%   % \item \highlite{Genomic predictions can be used in manifold ways}
+%   \end{itemize}
+% }
+% \end{column}
+% \begin{column}{0.7\linewidth}
+%   % \begin{figure}[width = \linewidth]
+% \vspace{-1cm}
+% \begin{tikzpicture}[scale = 1]
+% \node (tradProg) at (0, 0) {\includegraphics<1>[width=0.95\linewidth]{"\string~/Dropbox/sparseTesting/PhaseInVDPonly"}};
+% \node (breedingProg) at (0, 0) {\includegraphics<2>[width=0.95\linewidth]{"\string~/Dropbox/sparseTesting/PhaseIn1noText"}};
+% \end{tikzpicture}
+% % \end{figure}
+% \end{column}
+% \end{columns}
+% }
+
+
+
+\section{Phased In Approach}
+\subsection{From the Foundation Up}
+\frame{%\frametitle{Not without foundational capabilities!}
+
+\begin{columns}
+\begin{column}{0.4\linewidth}
+\footnotesize
+\visible<3->{
+  {\color{p1col}
+  \textbf{Phase 1: Informatics}
+  \begin{itemize}
+    \item Informatics, genotyping platform, SOPs and QC
+    % \item Genetic QC and pedigree verification
+    % \item Assess germplasm diversity
+    \item Genotyping all phenotyped entries to build training set
+    \item Offset with trial designs that exploit genotypic information
+  \end{itemize}
+  }
+}
+\visible<4->{
+  {\color{p2col}
+  \textbf{Phase 2: Optimize VDP}
+  \begin{itemize}
+    % \item Reduce time to multi-environment trials
+    \item Reduce number of years for testing
+    \item Recycle lines earlier in the VDP
+    \item Increase selection intensity using genomic prediction
+  \end{itemize}
+  }  
+}
+\visible<5->{
+  {\color{p3col}
+  \textbf{Phase 3: Rapid Cycling}
+  \begin{itemize}
+    \item Rapid cycle genomic selection
+    \item Drive generation intervals toward biological limits
+    \item Re-optimize VDP for rapid cycling
+  \end{itemize}
+  }  
+}
+\end{column}
+
+\begin{column}{0.6\linewidth}
+
+% PICK UP BACK HERE!
+
+\begin{tikzpicture}
+\visible<1-2>{
+\node at (0, 0) {\Large{\highlite{Can this be implemented at scale?}}};
+}
+\visible<2>{
+\node at (0, -2) {\Large{\highlite{Not without foundational capacities!}}};
+\node at (0, -4) {\Large{\highlite{Need a phased-in approach}}};
+}    
+% \node (epiEffGenet) at (0, 0) {\includegraphics[width = 0.6\linewidth]{frontiers}};
+  % \node at (-1, 1) {\includegraphics<1>[width= 0.2\linewidth]{frontiers}};
+  \node at (0, 0) {\includegraphics<3>[width= \linewidth]{{{"\string /home/nsant/Dropbox/sparseTesting/PhaseIn1noTextWithColor"}}}};%
+  \node at (0, 0) {\includegraphics<4>[width= \linewidth]{{{"\string /home/nsant/Dropbox/sparseTesting/PhaseIn2noTextWithColor"}}}};%
+  \node at (0, 0) {\includegraphics<5>[width= \linewidth]{{{"\string /home/nsant/Dropbox/sparseTesting/PhaseIn3noTextWithColor"}}}};%
+\end{tikzpicture}
+\end{column}
+\end{columns}
+
+}
+
+
+
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.3] {\includegraphics[height=\paperheight,width=\paperwidth]{"\string~/Dropbox/CUpres/truck"}};}
+
+\frame{
+  \begin{tikzpicture}
+    \node (lowResG3) at (0, 0) {\includegraphics[width = 0.8\linewidth]{frontiers}};
+    \node at (2, -3) {Accepted pending minor revision};
+  \end{tikzpicture}
+
+}
+\usebackgroundtemplate{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% END Frontiers SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% BEGIN breeding scheme optimization section %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Rapid cycling}
+
+\subsection{Rapid cycle recurrent truncation selection} 
+
+\frame{\frametitle{Rapid cycle recurrent truncation beats traditional, at first}
+\begin{columns}
+\begin{column}{0.05\linewidth}
+\end{column}
+\begin{column}{0.45\linewidth}
+  \includegraphics<1->[width= 0.9\linewidth]{{{"\string /home/nsant/Dropbox/VDPfig/truncation"}}}%
+\end{column}
+\begin{column}{0.45\linewidth}
+  \includegraphics<2>[width= 0.85\linewidth]{{{"\string /home/nsant/Dropbox/optiBreedSim/figsForPres/forKellyPresIowa/truncation20x75"}}}%
+\begin{column}{0.05\linewidth}
+\end{column}
+
+%   \visible<1-2>{Recurrent truncation selection using GEBVs in recurrent population. 
+%     \begin{enumerate}
+%       \item Randomly mate best predicted individuals in recurrent population
+%       \item 3 cycles per year
+%       \item Update genomic prediction models with phenotypes from VDP
+%       \item DH $f$ best heterozygous lines in recurrent population to form $n$ lines per family $\rightarrow$ VDP
+%       \item Rinse and repeat
+%     \end{enumerate}
+% }
+\end{column}
+\end{columns}
+}
+
+\subsection{Optimal contribution} 
+
+\frame{\frametitle{Parent selection must balance mean and variance}
+\vspace{-1cm}
+  \begin{columns}
+    \begin{column}{0.5\linewidth}
+      \centering
+      % \includegraphics<1-2>[width = \linewidth, page = 3]{{{"\string ~/Dropbox/PAG2019/increaseMean"}}}%
+      \includegraphics<1-2>[height = 8cm, page = 3]{{{"\string ~/Dropbox/PAG2019/increaseMean"}}}%
+    \end{column}
+    \begin{column}{0.5\linewidth}
+      \centering
+      % \includegraphics<2>[height = \linewidth, page = 3, clip, trim = 0.7cm 0cm 0cm 0cm]{{{"\string ~/Dropbox/PAG2019/increaseVar"}}}%
+      \includegraphics<2>[height = 8cm, page = 3, clip, trim = 0.7cm 0cm 0cm 0cm]{{{"\string ~/Dropbox/PAG2019/increaseVar"}}}%
+    \end{column}
+  \end{columns}
+}
+
+% \subsection{Optimal contribution} 
+
+% \frame{\frametitle{Optimal Contribution (OC): Balance genetic gain and inbreeding}
+% % From Akdemir et al. (2019):
+% \begin{columns}
+% \begin{column}{0.6\linewidth}
+% \begin{itemize}
+%   \item Let $\mathbf{b} = $ vector of GEBVs, $\text{E}[\mathbf{b}] = 0$
+%   \item Let Var$(\mathbf{b}) = \sigma^2_a \mathbf{K}$
+%   \item Let $\mathbf{c} = $ vector of proportional parent contributions, s.t.
+%     \begin{itemize}
+%       \item $\mathbf{c}'\mathbf{1} = 1$
+%       \item $\mathbf{c} \geq 0$
+%     \end{itemize}
+% \end{itemize}
+% % \pause
+%   \vspace{5mm}
+%   Expected gain: $\Delta_g = \mathbf{c}'\mathbf{b}$
+
+%   \vspace{5mm}
+%   Change in inbreeding: $\Delta_f = \mathbf{c}'\mathbf{K}\mathbf{c}$
+% % \pause
+
+%   \vspace{5mm}
+%   For some $\lambda$, 
+%   minimize $Q(\mathbf{c}) = \lambda \mathbf{c}'\mathbf{K}\mathbf{c} - (1-\lambda) \mathbf{c}'\mathbf{b}$. $\rightarrow$ Quadratic programmming
+% % \pause
+
+% \end{column}
+% \begin{column}{0.4\linewidth}
+
+%   % \vspace{5mm}
+%   % How to choose $\lambda$?
+
+%   \includegraphics<2>[width = \linewidth]{{{"\string~/Dropbox/optiBreedSim/figures/qp"}}}
+% \end{column}
+% \end{columns}
+
+% }
+
+\frame{\frametitle{Optimal contributions of parents}
+% From Akdemir et al. (2019):
+
+
+\begin{columns}
+
+
+\begin{column}{0.5\linewidth}
+Balance genetic gain and inbreeding
+    \begin{itemize}
+      \item Minimize inbreeding given desired gain
+      \item Maximize gain given acceptable inbreeding
+      \item See Meuwissen, 1997
+    \end{itemize}
+\vspace{3mm}
+Portfolio optimization problem 
+    \begin{itemize}
+      \item Solve with quadratic programming 
+      % \item Produce a Pareto frontier
+    \item \highlite{Doesn't always pick the ``best'' individuals}
+    \item \highlite{Parental contributions vary}
+    \end{itemize}
+
+
+
+\end{column}
+\begin{column}{0.5\linewidth}
+
+  % \vspace{-1cm}
+  % How to choose $\lambda$?
+\begin{tikzpicture}
+  \node at (0, 0) {\includegraphics<2>[clip, trim = 1cm 1cm 1cm 1cm, width = 0.85\linewidth]{"\string~/Dropbox/optiBreedSim/figures/qp"}};
+  \visible<2>{\node at (0, -3.5) {$\Delta$ Gain};}
+  \visible<2>{\node[rotate=90] at (-3.6, 0) {$\Delta$ Inbreeding};}
+\end{tikzpicture}
+
+\end{column}
+\end{columns}
+
+}
+
+% \subsection{Optimal contributions} 
+
+\frame{\frametitle{Optimal contributions can maintain $V_g$ at the cost of short-term gains}
+\begin{columns}
+\begin{column}{0.05\linewidth}
+\end{column}
+\begin{column}{0.45\linewidth}
+  \includegraphics<1>[width= \linewidth]{{{"\string /home/nsant/Dropbox/VDPfig/optiCont"}}}%
+  % \includegraphics<2->[width= \linewidth]{{{"\string /home/nsant/Dropbox/VDPfig/optiContBranchWithPheno"}}}%
+\end{column}
+\begin{column}{0.45\linewidth}
+  \includegraphics<1>[width= \linewidth, page = 1]{{{"\string /home/nsant/Dropbox/optiBreedSim/figures/bestModels20x75/bestNoOCBorOCBpR"}}}%
+  % \includegraphics<2>[width= \linewidth, page = 1]{{{"\string /home/nsant/Dropbox/optiBreedSim/figures/bestModels20x75/bestNoOCB"}}}%
+  % \includegraphics<3>[width= \linewidth, page = 8]{{{"\string /home/nsant/Dropbox/optiBreedSim/figures/bestModels20x75/bestRTvsOCBpR"}}}%
+
+  % \includegraphics<8>[width= 0.5\linewidth, page = 6]{{{"\string /home/nsant/Dropbox/optiBreedSim/figsForPres/optiContBranchPhenoRGSC20x75"}}}%
+\end{column}
+\begin{column}{0.05\linewidth}
+\end{column}
+\end{columns}
+}
+
+
+\subsection{Optimal contribution with branching} 
+
+\frame{\frametitle{Can we have our cake and eat it too?}
+\begin{columns}
+\begin{column}{0.05\linewidth}
+\end{column}
+\begin{column}{0.45\linewidth}
+  % \includegraphics<1>[width= \linewidth]{{{"\string /home/nsant/Dropbox/VDPfig/optiCont"}}}%
+  \includegraphics<1->[width= \linewidth]{{{"\string /home/nsant/Dropbox/VDPfig/optiContBranchWithPheno"}}}%
+\end{column}
+\begin{column}{0.45\linewidth}
+  % \includegraphics<1>[width= \linewidth, page = 1]{{{"\string /home/nsant/Dropbox/optiBreedSim/figures/bestModels20x75/bestNoOCBorOCBpR"}}}%
+  \includegraphics<1>[width= \linewidth, page = 1]{{{"\string /home/nsant/Dropbox/optiBreedSim/figures/bestModels20x75/bestNoOCB"}}}%
+  \includegraphics<2>[width= \linewidth, page = 8]{{{"\string /home/nsant/Dropbox/optiBreedSim/figures/bestModels20x75/bestRTvsOCBpR"}}}%
+
+  % \includegraphics<8>[width= 0.5\linewidth, page = 6]{{{"\string /home/nsant/Dropbox/optiBreedSim/figsForPres/optiContBranchPhenoRGSC20x75"}}}%
+\end{column}
+\begin{column}{0.05\linewidth}
+\end{column}
+\end{columns}
+}
+
+
+% \frame{\frametitle{Rapid Cycle Genomic Selection - Optimal contribution}
+% \begin{columns}
+% \begin{column}{0.05\linewidth}
+% \end{column}
+% \begin{column}{0.9\linewidth}
+%   \includegraphics<1>[width= 0.5\linewidth]{{{"\string /home/nsant/Dropbox/VDPfig/optiCont"}}}%
+%   \includegraphics<1>[width= 0.5\linewidth]{{{"\string /home/nsant/Dropbox/optiBreedSim/figsForPres/optiCont20x75"}}}%
+%   \includegraphics<2-4>[width= 0.5\linewidth]{{{"\string /home/nsant/Dropbox/VDPfig/optiContBranch"}}}%
+%   \visible<3>{\includegraphics<2-3>[width= 0.5\linewidth]{{{"\string /home/nsant/Dropbox/optiBreedSim/figsForPres/optiContBranch20x75"}}}}%
+%   \includegraphics<4>[width= 0.5\linewidth, page = 10]{{{"\string /home/nsant/Dropbox/optiBreedSim/figsForPres/optiContBranch20x75"}}}%
+%   \includegraphics<5-8>[width= 0.5\linewidth]{{{"\string /home/nsant/Dropbox/VDPfig/optiContBranchWithPheno"}}}%
+%   \visible<6>{\includegraphics<5-6>[width= 0.5\linewidth, page = 10]{{{"\string /home/nsant/Dropbox/optiBreedSim/figsForPres/optiContBranchPhenoRGSC20x75"}}}}%
+%   \visible<7>{\includegraphics<7>[width= 0.5\linewidth]{{{"\string /home/nsant/Dropbox/optiBreedSim/figsForPres/optiContBranchPhenoRGSC20x75"}}}}%
+%   \includegraphics<8>[width= 0.5\linewidth, page = 6]{{{"\string /home/nsant/Dropbox/optiBreedSim/figsForPres/optiContBranchPhenoRGSC20x75"}}}%
+% \end{column}
+% \begin{column}{0.05\linewidth}
+% \end{column}
+% \end{columns}
+% }
+% \frame{\frametitle{Rapid Cycle Genomic Selection - Optimal contribution}
+% \includegraphics<1>[width= 0.45\linewidth]{"\string /home/nsant/Dropbox/VDPfig/optiCont"}\includegraphics<1>[width= 0.45\linewidth]{"\string /home/nsant/Dropbox/optiBreedSim/figsForPres/optiCont20x75"}\includegraphics<2-3>[width= 0.45\linewidth]{"\string /home/nsant/Dropbox/VDPfig/optiContBranch"}\visible<3>{\includegraphics<2-3>[width= 0.45\linewidth]{"\string /home/nsant/Dropbox/optiBreedSim/figsForPres/optiContBranch20x75"}}\includegraphics<4-6>[width= 0.45\linewidth]{"\string /home/nsant/Dropbox/VDPfig/optiContBranchWithPheno"}\visible<5>{\includegraphics<4-5>[width= 0.45\linewidth]{"\string /home/nsant/Dropbox/optiBreedSim/figsForPres/optiContBranchPhenoRGSC20x75"}}\includegraphics<6>[width= 0.45\linewidth, page = 6]{"\string /home/nsant/Dropbox/optiBreedSim/figsForPres/optiContBranchPhenoRGSC20x75"}}
+
+\subsection{Conclusions from simulations}
+
+\frame{\frametitle{Rapid cycling }
+  
+  % Genomic information can be used to
+  % Genetic means and variances 
+  % \begin{itemize}
+  %   \item Truncation 
+  %   \item link seemingly unrelated trials
+  % \end{itemize}
+\begin{columns}
+\begin{column}{0.7\linewidth}
+% Truncation
+%   \begin{itemize}
+%     \item Short-term gains 
+%     \item Selection on related individuals quickly exhausts $V_g$...
+%   \end{itemize}
+
+% \vspace{0.3cm}
+
+% Optimal contribution
+%   \begin{itemize}
+%     \item Long-term sustainability 
+%     \item Sacrifice of short-term gains
+%   \end{itemize}
+
+% \vspace{0.3cm}
+% \pause
+
+% \highlite{Can we have our cake and eat it too?}
+% \vspace{0.3cm}
+
+Rethinking the selection pipeline
+  \begin{itemize}
+    \item Traditionally used for selection and validation 
+    \item Can also serve as an information generator!
+    \item Optimizing VDP to maximize products may not be intuitive
+  \end{itemize}
+
+
+  \vspace{0.3cm}
+ \highlite{Rapid cycling in \emph{Capsicum}}
+  \begin{itemize}
+    \item Start by genotyping! 
+    \item Build foundational capacities 
+    \item Economic index for rapid improvement?
+  \end{itemize}
+\end{column}
+
+\begin{column}{0.3\linewidth}
+% \pause
+%   \Large{\textbf{\highlite{Can this be done at scale?!}}} 
+
+% \pause
+  
+%   \Large{\textbf{\highlite{Not without foundational capabilities!}}}
+  
+  % \vspace{0.3cm}
+  
+  % \Large{\textbf{\highlite{Need a phased-in approach...}}}
+\end{column}
+
+\end{columns}
+}
+
+
+
+\usebackgroundtemplate{%
+\tikz\node[opacity=0.3] {\includegraphics[height=\paperheight,width=\paperwidth]{"\string~/Dropbox/CUpres/truck"}};}
+
+\frame{
+  \begin{tikzpicture}
+    \node (biorxiv) at (0, 0) {\includegraphics[width = 0.6\linewidth]{bioRxiv}};
+    \node at (3, -4) {G3: In Review};
+  \end{tikzpicture}
+}
+\usebackgroundtemplate{}
+
+
+
+\section{Plant Breeding}
+\subsection{Outline}
+
+\frame{
+\begin{columns}
+\begin{column}{0.3\linewidth}
+{\color{lgray}Plant breeding}
+\begin{itemize}
+\item {\color{lgray}Multi-disciplinary}
+\item {\color{lgray}Team oriented}
+\end{itemize}
+\vspace{3mm}
+{\color{lgray}Two and a half stories}
+\begin{itemize}
+  \item {\color{lgray}Subgenome interactions in wheat}
+  \item {\color{lgray}Transitioning to a $21^\text{st}$ Century breeding program}
+  \item Integrating the latest technologies
+\end{itemize}
+\end{column}
+\begin{column}{0.7\linewidth}
+\centering
+% \frametitle{Technology integration for advancing plant breeding}
+  \begin{tikzpicture}
+% helix
+
+      \begin{scope}[domain=1.9:13.1, samples=101, xshift = 0cm, yshift = -1cm, scale=0.18, rotate = 60]
+          \foreach \x in {2, ...,13}{
+            \draw[thick, \dnabridge, line cap=round] (\x,{-sin(\x*36)}) -- (\x,{sin(\x*36)});
+          }
+          \draw[\dnaA, very thick, line cap=round] plot (\x,{sin(\x*36)});
+          \draw[\dnaB, very thick, line cap=round] plot (\x,{-sin(\x*36)});
+          \node at (5,8) {\begin{tabular}{c} Genome-wide\\markers \end{tabular}};
+      \end{scope}
+
+      \begin{scope}[xshift = 5.5cm, yshift = 1cm, scale=0.15]
+          \foreach \x in {-9, ...,9}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 0.5] (\x*0.5 - 0.1, 0) rectangle (\x*0.5 + 0.1, -2);
+          }
+          \foreach \x in {-4, ...,4}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*0.75 - 0.25, -2.5) rectangle (\x*0.75 +0.25, -4.5);
+          }
+          \foreach \x in {-2, ...,2}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x-0.35, -5) rectangle (\x+0.35, -7);
+          }
+          \foreach \x in {-1, ...,1}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*1.25-0.45, -7.5) rectangle (\x*1.25+0.45, -10.5);
+          }
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (-0.45, -11) rectangle (0.45, -14);
+        % \node at (10,-7) {\begin{tabular}{c} Variety\\development\\pipeline \end{tabular}};
+        % \node at (10,-7) {\begin{tabular}{c} Variety\\development \end{tabular}};
+        \node at (10,-7) {\begin{tabular}{c} Ground\\phenotyping \end{tabular}};
+
+      \end{scope}
+  
+      % drone
+      \begin{scope}[xshift = 6cm, yshift = -2.5cm, scale=0.14]
+        \draw[draw = \dronedrawcol, fill = \dronefillcol] (0, 0) ellipse (6 and 0.5);
+        \draw[draw = \dronedrawcol, fill = \dronefillcol] (6, 1) ellipse (0.2 and 1);
+        \draw[draw = \dronedrawcol, fill = \dronefillcol] (-6, 1) ellipse (0.2 and 1);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (6, 2) circle (0.2);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (-6, 2) circle (0.2);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (4.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (-4.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (7.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (-7.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \dronedrawcol, fill = \dronecameracol, rounded corners = 1] (-2, -0.7) rectangle (2, -3);
+        \draw[draw = white, fill = black, thick] (0.7, -2) circle (0.7);
+        \fill[draw = white, fill = white] (0.5, -1.8) circle (0.3);
+        \node(center) at (0,-7) {\begin{tabular}{c} High throughput\\phenotyping \end{tabular}};
+      \end{scope}
+  
+      \begin{scope}[xshift = 3cm, yshift = -3.7cm, scale=0.12]
+          \node[database,label=below:Data management,database radius=0.75cm,database segment height=0.325cm, \dbcol, very thick] at (0,0) {};
+      \end{scope}
+  
+    \begin{scope}[xshift=0cm, yshift=-2.5cm, rotate=0, scale=0.25]
+      \fill[\gearcol] circle (2.5cm);
+      \draw[thick, fill = \gearcol] \gear{8}{2.5}{3}{20}{4}{16};
+      \draw[thick, dgray, fill=white] (0cm,0cm) circle(2cm);
+      \node[align=center, circle,inner sep=0pt, minimum size=3cm] (gp) at (0, 0) {\tiny{$\ \ \begin{aligned}\sum^P_{i=1} \alpha_i \end{aligned}$}};
+      \node at (0, -5) {\begin{tabular}{c} Statistics \&\\machine learning \end{tabular}};
+    \end{scope}
+  \begin{scope}[xshift = 3cm, yshift = 1.6cm, scale=1]
+    \node (wheatbig) at (0,0) {\includegraphics[height = 1.6cm]{"\string~/Dropbox/wheatCartoons/aestivum"}};
+    \node (wheatbig) at (0,1) {Organism biology};
+  \end{scope}
+  
+  \begin{scope}[xshift=3cm, yshift=-1cm, scale=1]
+    % \draw [->, dgray, very thick] ([shift=(445:0.5cm)] 0,-1) arc (445:335:0.5cm);
+    % \draw [->, dgray, very thick] ([shift=(205:0.5cm)] 0,-1) arc (205:95:0.5cm);
+    % \draw [->, dgray, very thick] ([shift=(325:0.5cm)] 0,-1) arc (325:215:0.5cm);
+    % \node (plbrg) at (0,-1.1) {Plant Breeding};
+    \node[draw,thick, LightGray, fill = DarkGray, minimum width=2cm,minimum height=1cm, rounded corners = 0.2cm] (plbrg) at (0,0) {Plant Breeding};
+    % \node (plbrg) at (0,0) {Plant Breeding};
+  \end{scope}
+
+  % \draw[->,\graycol, very thick] () -- (plbrg)
+
+\end{tikzpicture}%
+\end{column}
+\end{columns}
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% BEGIN alfalfa section %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \frame{
+%   \frametitle{Current Research}
+%   PB figure here, with 
+
+%   Note: Team effort! Nick Morales, Mahlet Anche, Sikiru 
+%   alfalfa program (Julie, Jamie, Jesse)
+% }
+
+\section{Integrating it all}
+
+
+\subsection{Forage}
+
+\frame{\frametitle{Alfalfa}
+\begin{columns}
+\begin{column}{0.5\linewidth}
+\begin{itemize}
+  \item Autotetraploid (4x = 2n = 32)
+  \item Perennial forage (3-4 years)
+  \item 3-10 cuts per year
+\end{itemize}
+\end{column}
+\begin{column}{0.5\linewidth}
+\begin{itemize}
+  \item Self-incompatible
+  \item High inbreeding depression
+  \item \highlite{Varieties are (synthetic) populations!}
+\end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{2mm}
+
+   \includegraphics[clip, trim = 0cm 18cm 0cm 22cm, width=\linewidth]{"\string~/Dropbox/alfalfaPics/drought7 - 2"}
+}
+
+
+
+\subsection{Forage}
+
+\frame{\frametitle{Alfalfa}
+\begin{columns}
+
+\begin{column}{0.3\linewidth}
+  \begin{tikzpicture}
+% % helix
+
+      \begin{scope}[xshift = 0cm, yshift = -1cm, scale=0.1]
+          \foreach \x in {-9, ...,9}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 0.5] (\x*0.5 - 0.1, 0) rectangle (\x*0.5 + 0.1, -2);
+          }
+          \foreach \x in {-4, ...,4}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*0.75 - 0.25, -2.5) rectangle (\x*0.75 +0.25, -4.5);
+          }
+          \foreach \x in {-2, ...,2}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x-0.35, -5) rectangle (\x+0.35, -7);
+          }
+          \foreach \x in {-1, ...,1}{
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (\x*1.25-0.45, -7.5) rectangle (\x*1.25+0.45, -10.5);
+          }
+        \draw[draw = \plotLine, fill = \plotFill, thick, rounded corners = 1] (-0.45, -11) rectangle (0.45, -14);
+        % \node at (10,-7) {\begin{tabular}{c} Variety\\development\\pipeline \end{tabular}};
+        % \node at (10,-7) {\begin{tabular}{c} Variety\\development \end{tabular}};
+        % \node at (10,-7) {\begin{tabular}{c} Ground\\phenotyping \end{tabular}};
+
+      \end{scope}
+
+      % drone
+      \begin{scope}[xshift = 0cm, yshift = -0.5cm, scale=0.1]
+        \draw[draw = \dronedrawcol, fill = \dronefillcol] (0, 0) ellipse (6 and 0.5);
+        \draw[draw = \dronedrawcol, fill = \dronefillcol] (6, 1) ellipse (0.2 and 1);
+        \draw[draw = \dronedrawcol, fill = \dronefillcol] (-6, 1) ellipse (0.2 and 1);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (6, 2) circle (0.2);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (-6, 2) circle (0.2);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (4.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (-4.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (7.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \dronedrawcol, fill = \dronebladecol] (-7.5, 2) ellipse (1.5 and 0.1);
+        \draw[draw = \dronedrawcol, fill = \dronecameracol, rounded corners = 1] (-2, -0.7) rectangle (2, -3);
+        \draw[draw = white, fill = black, thick] (0.7, -2) circle (0.7);
+        \fill[draw = white, fill = white] (0.5, -1.8) circle (0.3);
+        % \node(center) at (0,-7) {\begin{tabular}{c} High throughput\\phenotyping \end{tabular}};
+      \end{scope}
+    
+      % database
+
+      \begin{scope}[xshift = 1cm, yshift = -2.5cm, scale=0.05]
+          \node[database,database radius=0.375cm,database segment height=0.17cm, \dbcol, very thick] at (0,0) {};
+      \end{scope}
+
+    \begin{scope}[xshift=-1cm, yshift=-2.5cm, rotate=0, scale=0.15]
+      \fill[\gearcol] circle (2.5cm);
+      \draw[thick, fill = \gearcol] \gear{8}{2.5}{3}{20}{4}{16};
+      \draw[thick, \graycol, fill=white] (0cm,0cm) circle(2cm);
+      \node[align=center, circle,inner sep=0pt, minimum size=3cm] (gp) at (0, 0) {\tiny{$\ \ \begin{aligned}\sum \end{aligned}$}};
+      % \node at (0, -5) {\begin{tabular}{c} Statistics \&\\machine learning \end{tabular}};
+    \end{scope}
+  
+  \begin{scope}[xshift = -0.5cm, yshift = -4.3cm, scale=0.5]
+    \node (wheatbig) at (0,0) {\includegraphics[height = 1.2cm]{"\string~/Dropbox/wheatCartoons/aestivum"}};
+    % \node (wheatbig) at (0,1) {Organism biology};
+  \end{scope}
+  
+      \begin{scope}[domain=1.9:13.1, samples=101, xshift = 0.5cm, yshift = -5cm, scale=0.1, rotate = 60]
+          \foreach \x in {2, ...,13}{
+            \draw[thick, \dnabridge, line cap=round] (\x,{-sin(\x*36)}) -- (\x,{sin(\x*36)});
+          }
+          \draw[\dnaA, very thick, line cap=round] plot (\x,{sin(\x*36)});
+          \draw[\dnaB, very thick, line cap=round] plot (\x,{-sin(\x*36)});
+          % \node at (5,8) {\begin{tabular}{c} Genome-wide\\markers \end{tabular}};
+      \end{scope}
+  % \draw[->,\graycol, very thick] () -- (plbrg)
+
+\end{tikzpicture}%
+\end{column}
+
+\begin{column}{0.4\linewidth}
+
+High phenotypic burden
+\begin{itemize}
+  \item Low $h^2$ = High reps
+  \item Multi-harvest, multi-year
+  \item \highlite{High throughput phenotyping}
+  \item \highlite{Genomic selection}
+\end{itemize}
+
+\vspace{3mm}
+How to genotype?
+\begin{itemize}
+  \item Varieties/lines are populations
+  \item Which/how many individuals?
+\end{itemize}
+
+\end{column}
+\begin{column}{0.3\linewidth}
+   \includegraphics[ width=\linewidth, clip, trim=10cm 0cm 0cm 20cm]{"\string~/Dropbox/robbinsLabUpdates/Jan28_2020/yellow"}
+\end{column}
+\end{columns}
+}
+
+\section{USAFRI}
+\subsection{GS/HTP strategies for alfalfa}
+
+\frame{\frametitle{US Alfalfa Farmer Research Initiative (USAFRI) Grant}
+
+\emph{Evaluating Approaches to High-Throughput Phenotyping and Genotyping for Genomic Selection in Alfalfa}
+\begin{columns}
+\begin{column}{0.7\linewidth}
+
+% \vspace{1cm}
+
+% Phenotyping growth
+% \begin{itemize}
+%   \item Eight Cornell varieties
+%   \item Collected multi-spectral images for 2$^\text{nd}$ and 3$^\text{rd}$ cuts of 2019
+%   \item every 3--4 days
+%   \item Forage yield
+% \end{itemize}
+
+% % \pause
+
+Population-level genotyping
+\begin{itemize}
+  % \item Bulk DNA extraction
+  \item Pool/bulk seeds for sequencing 
+\end{itemize}
+
+\vspace{3mm}
+
+Whole genome re-sequencing 50$\times$
+\begin{itemize}
+  \item 9 historic germplasm sources
+  \item 8 Cornell varieties 
+\end{itemize}
+\vspace{3mm}
+
+Align to alfalfa genome
+\begin{itemize}
+  \item Call variants, count alleles in population 
+  \item Calculate relationship from allele frequencies
+\end{itemize}
+\end{column}
+
+\begin{column}{0.3\linewidth}
+    % \includegraphics<1>[height= 0.97\linewidth, clip, trim=10cm 13cm 10cm 13cm , rotate = 90]{{{"\string /home/nsant/droneImages/alfalfaTestOrthoPix4d/4_index/reflectance/alfalfaTest_transparent_reflectance_nir"}}}%
+    \includegraphics[width= \linewidth]{{{"\string /home/nsant/Dropbox/robbinsLabUpdates/Nov11_2019/alfalfaGerm"}}}%
+\end{column}
+\end{columns}
+
+}
+
+
+\subsection{Diallel}
+
+\frame{\frametitle{Validation in diallel of 9 historic germplasm sources}
+AFLPs (Segovia-Lerma 2003, 2004)
+\centering
+% \includegraphics<1>[width= 0.7\linewidth]{"\string /home/nsant/Dropbox/robbinsLabUpdates/Jan28_2020/SL2003tab1"}
+\includegraphics[width= 0.7\linewidth]{"\string /home/nsant/Dropbox/robbinsLabUpdates/Jan28_2020/SL2003fig1"}
+}
+
+% \frame{\frametitle{Pooling effects on allele frequency estimates}
+%    \begin{columns}
+%    \begin{column}{0.5\linewidth}
+%     \centering
+%     \includegraphics[width= \linewidth]{{{"\string /home/nsant/Dropbox/robbinsLabUpdates/Nov11_2019/DNAtemplate"}}}%{}%
+
+% Four replicates, some failed
+
+%     \includegraphics[width= \linewidth]{{{"\string /home/nsant/Dropbox/robbinsLabUpdates/Nov11_2019/dnaext"}}}%{}%
+%    \pause
+   
+% What do we expect from unequal pooling?
+
+% Simulate, allow unequal pooling by factor of 4
+%    \end{column}
+%    \begin{column}{0.5\linewidth}
+%     \centering
+%     \vspace{-0.3cm}
+%     \includegraphics[width= \linewidth]{{{"\string /home/nsant/Dropbox/popLevelGenotyping/AlleleFreqDNApooling"}}}%
+   
+%    \end{column}
+%    \end{columns}
+
+% }
+
+
+\subsection{Prediction in 9 historic germplasm sources}
+
+\frame{\frametitle{Kinship in the diallel using AFLPs}
+    \vspace{-0.2cm}
+    \begin{columns}
+   \begin{column}{0.3\linewidth}
+  Half-diallel
+  \begin{itemize}
+  \item Forage Yield
+  \begin{itemize}
+  \item  1997--1998
+  \item  5 cuts/yr
+  \end{itemize}
+  \item 1,544 AFLPs
+  \end{itemize}
+\vspace{1mm}
+Diallel
+  \begin{itemize}
+  \item 9 parent populations
+  \item 36 hybrids families
+  \end{itemize}
+
+\pause
+
+
+
+AFLPs track pedigree well
+  \begin{itemize}
+  \item Dominant
+  \item \highlite{No dosage}
+  \end{itemize}
+    \end{column}
+  \begin{column}{0.7\linewidth}
+\includegraphics[width= \linewidth]{{{"\string /home/nsant/Dropbox/popLevelGenotyping/AvsK"}}}%
+
+    % \includegraphics[width=\textwidth]{/home/nsant/Dropbox/popLevelGenotyping/leaveOneFamOutPredAcc}
+   \end{column}
+
+    \end{columns}
+    
+}
+
+
+
+
+
+\frame{\frametitle{Genomic prediction with AFLPs}
+    \vspace{-0.2cm}
+    \begin{columns}
+   \begin{column}{0.3\linewidth}
+
+AFLPs increase prediction accuracy
+\visible<2-3>{
+  
+  \begin{itemize}
+  \item Does dosage help prediction?
+  \item Validate PopGS strategy
+  \end{itemize}
+}
+ 
+\visible<3>{
+  \highlite{What about population allele frequencies?}\\
+  TBD
+ }
+    \end{column}
+  \begin{column}{0.7\linewidth}
+% \includegraphics[width= \linewidth]{{{"\string /home/nsant/Dropbox/popLevelGenotyping/AvsK"}}}%
+
+    \includegraphics<1-3>[width=\textwidth]{/home/nsant/Dropbox/popLevelGenotyping/leaveOneFamOutPredAcc}
+   \end{column}
+
+    \end{columns}
+    
+}
+
+
+
+\subsection{Genotype specific growth curves}
+\frame{
+  % \frametitle{Growth Curves}
+\highlite{Building genotype specific growth curves to understand G$\times$E}
+\centering
+  \animategraphics[controls, width = 0.6\linewidth]{1}{../../alfalfaGeneva/animateOrtho/ortho}{1}{21}
+}
+
+
+\frame{
+  \frametitle{Moving Forward}
+
+  \begin{columns}
+  \begin{column}{0.5\linewidth}
+\begin{tikzpicture}
+
+
+
+  \node at (0,0) {\includegraphics[clip, trim = 5cm 0cm 10cm 0cm, width = 0.8\linewidth]{field}};
+
+  \begin{scope}[xshift = -1cm, yshift = 2.5cm, scale=0.12]
+  
+  \fill[fill = dgray] (0, 0) ellipse (6 and 0.5);
+  
+  \fill[fill = dgray] (6, 1) ellipse (0.2 and 1);
+  \fill[fill = dgray] (-6, 1) ellipse (0.2 and 1);
+  
+  \fill[fill = dgray] (6, 2) circle (0.2);
+  \fill[fill = dgray] (-6, 2) circle (0.2);
+  
+  \fill[fill = dgray] (4.5, 2) ellipse (1.5 and 0.1);
+  \fill[fill = dgray] (-4.5, 2) ellipse (1.5 and 0.1);
+  
+  \fill[fill = dgray] (7.5, 2) ellipse (1.5 and 0.1);
+  \fill[fill = dgray] (-7.5, 2) ellipse (1.5 and 0.1);
+
+  \fill[fill = dgray, rounded corners = 1mm] (-2, -0.6) rectangle (2, -3);
+
+  \draw[draw = white, fill = black, thick] (0.7, -2) circle (0.7);
+  \fill[draw = white, fill = white] (0.5, -1.8) circle (0.3);
+
+  % \draw[draw = white, fill = black, thick] (0.7, -2) -- (0.7);
+  % \draw[draw = \dronecol, fill = \dronecol] (0, 1.2) circle (1cm);
+  % \draw[draw = \dronecol, fill = \dronecol, rounded corners=1.2mm] ([shift=(135:2.5cm)]0,-2.5) arc (135:45:2.5cm) -- (0, -3) -- cycle;
+\end{scope}
+
+
+
+  \begin{scope}[xshift = 0.45cm, yshift = -2.3cm, scale=0.12]
+  
+  
+  \fill[fill = white, rounded corners = 1mm] (-1, -4) rectangle (2.5, 1);
+  \fill[fill = dgray, rounded corners = 1mm] (-0.5, -0.6) rectangle (2, -3);
+
+  \fill[fill = black, rounded corners = 0.2mm] (-2, -4.5) rectangle (-1, -2);
+  \fill[fill = black, rounded corners = 0.2mm] (2.5, -4.5) rectangle (3.5, -2);
+
+
+  \draw[draw = white, fill = black, thick] (0.7, -2) circle (0.7);
+  \fill[draw = white, fill = white] (0.5, -1.8) circle (0.3);
+
+  % \draw[draw = white, fill = black, thick] (0.7, -2) -- (0.7);
+  % \draw[draw = \dronecol, fill = \dronecol] (0, 1.2) circle (1cm);
+  % \draw[draw = \dronecol, fill = \dronecol, rounded corners=1.2mm] ([shift=(135:2.5cm)]0,-2.5) arc (135:45:2.5cm) -- (0, -3) -- cycle;
+\end{scope}
+
+\node at (0, -3.5) {\tiny{https://www.pinterest.com/pin/473722454525419585/}};
+\end{tikzpicture}
+  \end{column}
+  \begin{column}{0.5\linewidth}
+  
+  Changing \emph{Capsicum} plant architecture
+  \begin{itemize}
+    \item Open canopy structure
+    \item Coordinated fruit set
+  \end{itemize}
+\vspace{5mm}
+  Machine learning plant growth and development
+  \begin{itemize}
+    \item Ground and aerial images
+    \item 3D architecture reconstruction
+    \item Train on mechanical harvesting output
+  \end{itemize}
+  \end{column}
+  \end{columns}
+
+  }
+
+\section{Recognition and Funding}
+% \subsection{Recognition and Funding}
+
+\frame{\frametitle{Recognition}
+\begin{columns}
+
+\begin{column}{0.2\linewidth}
+
+\includegraphics[width = 0.5\linewidth]{"\string~/Dropbox/plantGenomicsCongress/funding/cornell"}
+
+\textbf{Robbins Lab}
+\scriptsize 
+
+Kelly Robbins \\
+Peter Selby \\
+Sikiru Atanda \\
+Mahlet Anche \\
+Nicolas Morales \\
+Evan Long \\
+
+\end{column}
+
+\begin{column}{0.2\linewidth}
+
+\textbf{Sorrells/Jannink Labs}
+\scriptsize 
+
+Lisa Kissing Kucek\\
+Lynn Veenstra\\
+Itaraju Brum\\
+Uche Godfrey Okeke\\
+Marnin Wolfe\\
+Roberto Lonzano Gonzalez\\
+David Benscher\\
+Amy Fox\\
+Jesse Chavez\\
+James Tanaka\\
+
+
+
+\end{column}
+
+
+\begin{column}{0.2\linewidth}
+
+\textbf{Other Cornell Collaborators}
+
+\scriptsize 
+Susan McCouch \\
+Mike Gore \\
+Nick Kaczmar \\
+\vspace{0.2cm}
+
+\includegraphics[width = 0.5\linewidth]{"\string~/Dropbox/plantGenomicsCongress/funding/usda"}
+
+\scriptsize 
+Ed Buckler \\
+Jean-Luc Jannink \\
+
+\vspace{0.5cm}
+
+\includegraphics[width = 0.5\linewidth]{"\string~/Dropbox/plantGenomicsCongress/funding/bti"}
+
+\scriptsize 
+Lukas Mueller \\
+
+\end{column}
+
+
+\begin{column}{0.2\linewidth}
+
+
+\includegraphics[width = 0.3\linewidth]{"\string~/Dropbox/plantGenomicsCongress/funding/cgiar"}
+
+\scriptsize 
+Mike Olsen \\
+Yoseph Beyene \\
+Jose Crossa \\
+Manish Roorkiwal \\
+Rajeev Varshney \\
+Abhishek Rathore \\
+many more...
+\end{column}
+
+\begin{column}{0.2\linewidth}
+
+
+\includegraphics[width = 0.3\linewidth]{../NMSUlogo}
+
+\normalsize {\textbf{New Mexico State University}}
+\scriptsize 
+Ian Ray\\
+Chris Pierce\\
+Chris Cramer\\
+Champa Sengupta Gopalan\\
+Jinfa Zhang\\
+Robert Steiner\\
+\end{column}
+
+\end{columns}
+
+% \vspace{0.2cm}
+\textbf{Funding}\\
+\includegraphics[width = 0.1\linewidth]{"\string~/Dropbox/CUpres/usda"} \hspace{0.5cm}
+\includegraphics[width = 0.2\linewidth]{"\string~/Dropbox/plantGenomicsCongress/funding/gates"} \hspace{0.5cm}
+\includegraphics[width = 0.2\linewidth]{"\string~/Dropbox/plantGenomicsCongress/funding/g2f"} \hspace{0.5cm}
+\includegraphics[width = 0.2\linewidth]{"\string~/Dropbox/plantGenomicsCongress/funding/iowa"}
+% \includegraphics[width = 0.2\linewidth, clip, trim = 0cm 2cm 0cm 0cm ]{funding/usda}
+% \end{column}
+% \begin{column}{0.3\linewidth}
+
+% \end{column}
+
+}
+
+
+\end{document}
